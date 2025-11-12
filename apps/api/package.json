@@ -1,0 +1,51 @@
+{
+  "name": "@fullstack-boilerplate/api",
+  "type": "module",
+  "exports": {
+    "./client": {
+      "import": {
+        "default": "./dist/client.js",
+        "type": "./dist/client.d.ts"
+      }
+    }
+  },
+  "scripts": {
+    "dev": "pnpm --filter @fullstack-boilerplate/api --parallel \"/^dev:.*/\"",
+    "dev:watch": "tsx watch --env-file=.env src/index.ts",
+    "dev:build": "tsc -p tsconfig.build.json --watch",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node --env-file=.env dist/index.js",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --fix --cache",
+    "format": "prettier --write --experimental-cli src/"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.8",
+    "@hono/zod-validator": "^0.7.6",
+    "@libsql/client": "^0.17.0",
+    "@types/pg": "^8.16.0",
+    "better-auth": "^1.4.10",
+    "better-sqlite3": "^12.6.0",
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.45.1",
+    "hono": "^4.11.3",
+    "hono-rate-limiter": "^0.5.3",
+    "pg": "^8.17.1",
+    "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@eslint/json": "^0.14.0",
+    "@eslint/markdown": "^7.5.1",
+    "@hono/eslint-config": "^2.0.5",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.0.5",
+    "drizzle-kit": "^0.31.8",
+    "eslint": "^9.39.2",
+    "globals": "^17.0.0",
+    "prettier": "3.7.4",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.53.0"
+  }
+}

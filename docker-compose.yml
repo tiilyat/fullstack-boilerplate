@@ -1,0 +1,77 @@
+version: "3.9"
+
+services:
+  # Frontend - Vue 3 + Vite app served by Nginx
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        # Build-time environment variables (baked into the build)
+        # Change these requires rebuilding the image
+        VITE_API_URL: http://localhost:8000
+    ports:
+      - "5173:80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+
+  # PostgreSQL database
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d app"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Backend - Hono API
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=production
+      - PORT=8000
+      - BETTER_AUTH_SECRET=05uslrTnOEH8fJ722coj/gHJLGAv3sLk/YwgauT/HvA=
+      - BETTER_AUTH_URL=http://localhost:8000
+      - BETTER_AUTH_TRUSTED_ORIGINS=http://localhost:5173
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/app
+      - CORS_ALLOW_ORIGINS=http://localhost:5173
+    env_file:
+      - apps/api/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+# Volumes for persistent data
+volumes:
+  postgres_data:
+    driver: local
+
+# Networks (optional - default bridge network works fine)
+networks:
+  default:
+    name: app_network
