@@ -1,3 +1,2 @@
 pnpm turbo run lint --ui=stream
-pnpm turbo run format --ui=stream
 pnpm turbo run type-check --ui=stream

@@ -1,8 +1,8 @@
+import { useQueryClient } from '@tanstack/vue-query'
+import { createRouter, createWebHistory } from 'vue-router'
 import DashboardLayout from '@/layouts/dashboard-layout.vue'
 import DefaultLayout from '@/layouts/default-layout.vue'
 import { authClient, type Session } from '@/lib/auth-client'
-import { useQueryClient } from '@tanstack/vue-query'
-import { createRouter, createWebHistory } from 'vue-router'
 
 const AUTH_USER_KEY = ['auth-user'] as const
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useLoginEmail } from '@/composables/use-auth'
 import type { AuthFormField, FormSubmitEvent } from '@nuxt/ui'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import * as z from 'zod'
+import { useLoginEmail } from '@/composables/use-auth'
 
 const router = useRouter()
 const loading = ref(false)

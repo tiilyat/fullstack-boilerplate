@@ -6,8 +6,8 @@
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
     "types": ["node"],
-    "outDir": "./dist",
+    "outDir": "./dist"
   },
   "include": ["src", "node.d.ts", "drizzle.config.ts"],
-  "exclude": ["dist", "node_modules"],
+  "exclude": ["dist", "node_modules"]
 }

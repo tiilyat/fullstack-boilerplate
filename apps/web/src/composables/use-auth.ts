@@ -1,5 +1,5 @@
-import { authClient } from '@/lib/auth-client'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
+import { authClient } from '@/lib/auth-client'
 
 const userKey = ['auth-user'] as const
 

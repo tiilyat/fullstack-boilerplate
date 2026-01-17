@@ -55,7 +55,6 @@ export function tasksRoutes(controllers: TasksControllers) {
       },
     )
     .delete('/:id', zValidator('param', TaskParamsSchema), async (c) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const user = c.get('user')!
       const { id } = c.req.valid('param')
       const deleted = await controllers.deleteTask(user.id, id)

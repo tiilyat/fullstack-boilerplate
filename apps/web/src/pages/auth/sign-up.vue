@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { authClient } from '@/lib/auth-client'
 import type { AuthFormField, FormSubmitEvent } from '@nuxt/ui'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import * as z from 'zod'
+import { authClient } from '@/lib/auth-client'
 
 const router = useRouter()
 const loading = ref(false)
@@ -35,11 +35,12 @@ type Schema = z.output<typeof schema>
 
 async function onSubmit(payload: FormSubmitEvent<Schema>) {
   const { data } = payload
+
   await authClient.signUp.email(
     {
       email: data.email,
       password: data.password,
-      name: data.email.split('@')[0]!,
+      name: data.email.split('@')[0] ?? data.email,
     },
     {
       onRequest: () => {

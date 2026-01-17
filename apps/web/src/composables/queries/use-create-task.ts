@@ -1,6 +1,6 @@
-import apiClient from '@/lib/api-client'
 import type { InferRequestType, InferResponseType } from '@fullstack-boilerplate/api/client'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import apiClient from '@/lib/api-client'
 
 const $post = apiClient.api.v1.tasks.$post
 
