@@ -1,6 +1,7 @@
 ---
 name: nuxt-ui-docs
-description: Fetch up-to-date Nuxt UI documentation using llms.txt format. Use when answering questions about Nuxt UI components, theming, composables, installation, or best practices.
+description: This skill should be used when the user asks about Nuxt UI components ("How do I use Button?", "What props does Card accept?"), theming ("How to customize colors?"), composables ("How does useToast work?"), installation, or best practices. Fetches up-to-date documentation from ui.nuxt.com using llms.txt format.
+version: 1.0.0
 allowed-tools: ["WebFetch"]
 metadata:
   category: "documentation"
@@ -15,14 +16,7 @@ This skill fetches current Nuxt UI documentation directly from ui.nuxt.com using
 
 ## When to Use
 
-Invoke this skill when the user asks about:
-
-- **Nuxt UI components** - "How do I use the Button component?", "What props does Card accept?"
-- **Theming and customization** - "How to customize colors?", "Can I use custom CSS variables?"
-- **Installation and setup** - "How to install Nuxt UI?", "How to migrate from v2?"
-- **Composables** - "How does useToast work?", "What's the keyboard shortcut API?"
-- **Integrations** - "How to use with i18n?", "Does it support dark mode?"
-- **Best practices** - "When should I use Nuxt UI?", "What's the recommended approach for...?"
+This skill provides access to specific component APIs, theming system configuration, composables usage, and integration guides when users ask about Nuxt UI functionality.
 
 ## Instructions
 
@@ -64,7 +58,7 @@ Analyze the user's question and map it to specific documentation sections:
 
 ### Step 3: Fetch Specific Documentation
 
-Once you've identified 1-3 relevant pages, fetch them with targeted prompts:
+After identifying 1-3 relevant pages, fetch them with targeted prompts:
 
 ```
 WebFetch https://ui.nuxt.com/components/button
@@ -86,58 +80,16 @@ Based on the fetched documentation:
 4. **Link to docs** - Provide URLs for further reading
 5. **Note version-specific details** - Mention if features are v4-specific or require migration
 
-## Example Workflow
+## Quick Start Example
 
-**User:** "How do I create a toast notification in Nuxt UI?"
-
-**Claude:**
-
-1. Fetches `https://ui.nuxt.com/llms.txt` to find toast-related documentation
-2. Identifies relevant page: `/composables/use-toast`
-3. Fetches `https://ui.nuxt.com/composables/use-toast` with prompt: "Explain how to use useToast composable, including all methods and options"
-4. Responds with:
-
----
-
-To create toast notifications in Nuxt UI, use the `useToast` composable:
-
-```vue
-<script setup>
-const toast = useToast()
-
-function showSuccess() {
-  toast.add({
-    title: 'Success!',
-    description: 'Your changes have been saved.',
-    color: 'green'
-  })
-}
-</script>
-```
-
-**Available methods:**
-- `toast.add(notification)` - Show a notification
-- `toast.remove(id)` - Remove a specific notification
-- `toast.clear()` - Clear all notifications
-
-**Notification options:**
-- `title` - Notification title
-- `description` - Optional description
-- `color` - UI color (default, primary, red, green, etc.)
-- `icon` - Optional icon name
-- `timeout` - Auto-dismiss duration (ms)
-- `actions` - Array of action buttons
-
-Learn more: https://ui.nuxt.com/composables/use-toast
-
----
+For a complete workflow example, see **[examples/toast-notification.md](examples/toast-notification.md)** which demonstrates how to handle the question: "How do I create a toast notification in Nuxt UI?"
 
 ## Progressive Disclosure Strategy
 
 Nuxt UI provides two documentation levels:
 
-- **`/llms.txt`** (~5K tokens) - Concise overview with component summaries and links
-- **`/llms-full.txt`** (1M+ tokens) - Comprehensive details with all examples
+- **`/llms.txt`** - Concise overview with component summaries and links
+- **`/llms-full.txt`** - Comprehensive details with all examples (significantly larger)
 
 **Recommended approach:**
 
@@ -168,48 +120,20 @@ When relevant to the user's question, mention:
 - If documentation is unclear or missing, say so and suggest checking the official docs
 - Use WebFetch tool exclusively for fetching documentation
 
-## Common Pitfalls
+## Additional Resources
 
-**Don't:**
-- Assume API details from older versions - always fetch current docs
-- Fetch `/llms-full.txt` by default - it's 1M+ tokens and usually unnecessary
-- Provide generic Nuxt/Vue answers when Nuxt UI has specific patterns
-- Recommend alternatives without checking if Nuxt UI has a solution
+### Troubleshooting and Best Practices
 
-**Do:**
-- Start with `/llms.txt` to map questions to pages
-- Fetch 1-3 specific pages with targeted prompts
-- Show realistic code examples from the documentation
-- Mention version-specific features when relevant
+For detailed guidance on common pitfalls and best practices, consult:
+- **[references/troubleshooting.md](references/troubleshooting.md)** - Common mistakes, anti-patterns, debugging tips
 
-## Examples
+### Working Examples
 
-### Example 1: Component Props
-
-**User:** "What props does the Tooltip component accept?"
-
-**Claude:**
-1. Fetches `/llms.txt` → finds Tooltip component link
-2. Fetches `https://ui.nuxt.com/components/tooltip` with prompt: "List all props, slots, and usage examples for Tooltip"
-3. Provides comprehensive prop list with types and descriptions
-
-### Example 2: Theming Question
-
-**User:** "How do I customize the primary color?"
-
-**Claude:**
-1. Fetches `/llms.txt` → identifies theming documentation
-2. Fetches `https://ui.nuxt.com/getting-started/theme` with prompt: "Explain how to customize colors using CSS variables"
-3. Shows configuration example with color customization
-
-### Example 3: Migration Help
-
-**User:** "I'm migrating from v2 to v3, what changed?"
-
-**Claude:**
-1. Fetches `/llms.txt` → finds migration guide
-2. Fetches `https://ui.nuxt.com/getting-started/migration/v2-v3` with prompt: "List all breaking changes and migration steps"
-3. Provides step-by-step migration guide with code examples
+Practical examples demonstrating the skill workflow:
+- **[examples/component-props.md](examples/component-props.md)** - Querying component API details
+- **[examples/theming-customization.md](examples/theming-customization.md)** - Customizing colors and theme
+- **[examples/migration-guide.md](examples/migration-guide.md)** - Handling version migration questions
+- **[examples/toast-notification.md](examples/toast-notification.md)** - Complete workflow example
 
 ## Reference
 
