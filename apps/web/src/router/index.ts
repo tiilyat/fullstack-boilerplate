@@ -1,62 +1,26 @@
 import { useQueryClient } from '@tanstack/vue-query'
-import { createRouter, createWebHistory } from 'vue-router'
-import DashboardLayout from '@/layouts/dashboard-layout.vue'
-import DefaultLayout from '@/layouts/default-layout.vue'
+import { createRouter, createWebHistory, type NavigationGuardWithThis } from 'vue-router'
 import { authClient, type Session } from '@/lib/auth-client'
+import { routes } from './routes'
 
 const AUTH_USER_KEY = ['auth-user'] as const
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      component: DefaultLayout,
-      children: [
-        {
-          path: '/auth',
-          name: 'auth',
-          children: [
-            {
-              path: '',
-              name: 'sign-in',
-              component: () => import('@/pages/auth/sign-in.vue'),
-            },
-            {
-              path: 'sign-up',
-              name: 'sign-up',
-              component: () => import('@/pages/auth/sign-up.vue'),
-            },
-          ],
-        },
-        {
-          path: '',
-          component: DashboardLayout,
-          meta: { requiresAuth: true },
-          children: [
-            {
-              path: '',
-              name: 'home',
-              component: () => import('@/pages/home.vue'),
-            },
-          ],
-        },
-      ],
-    },
-  ],
-})
-
-router.beforeEach(async (to) => {
+export const authGuard: NavigationGuardWithThis<undefined> = async (to) => {
   const queryClient = useQueryClient()
 
   let user = queryClient.getQueryData<Session | null>(AUTH_USER_KEY)
 
-  if (user === undefined) {
+  if (!user) {
     try {
       user = await queryClient.ensureQueryData({
         queryKey: AUTH_USER_KEY,
         queryFn: async () => {
           const session = await authClient.getSession()
+
+          if (!session.data) {
+            throw new Error('Unauthorized')
+          }
+
           return session.data
         },
         staleTime: 1000 * 60 * 5,
@@ -68,9 +32,11 @@ router.beforeEach(async (to) => {
 
   const isAuthenticated = !!user
 
-  if (to.meta.requiresRole && isAuthenticated && user) {
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    // Redirect to login page with return URL
     return {
-      name: 'home',
+      name: 'sign-in',
+      query: { redirectTo: to.fullPath },
     }
   }
 
@@ -85,6 +51,13 @@ router.beforeEach(async (to) => {
   }
 
   return true
+}
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes,
 })
+
+router.beforeEach(authGuard)
 
 export default router

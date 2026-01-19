@@ -1,13 +1,33 @@
 <script setup lang="ts">
 import type { AuthFormField, FormSubmitEvent } from '@nuxt/ui'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import * as z from 'zod'
-import { authClient } from '@/lib/auth-client'
+import { useRegisterEmail } from '@/composables/use-auth'
 
 const router = useRouter()
+const route = useRoute()
+const redirectTo = route.query.redirectTo as string | undefined
 const loading = ref(false)
 const error = ref<string | null>(null)
+const { mutate } = useRegisterEmail({
+  onMutate: () => {
+    loading.value = true
+    error.value = null // Clear previous errors
+  },
+  onError: (e) => {
+    loading.value = false
+    if (e instanceof Error) {
+      error.value = e.message
+    } else {
+      error.value = 'An unknown error occurred'
+    }
+  },
+  onSuccess: () => {
+    loading.value = false
+    router.push(redirectTo || '/')
+  },
+})
 
 const fields: AuthFormField[] = [
   {
@@ -36,26 +56,11 @@ type Schema = z.output<typeof schema>
 async function onSubmit(payload: FormSubmitEvent<Schema>) {
   const { data } = payload
 
-  await authClient.signUp.email(
-    {
-      email: data.email,
-      password: data.password,
-      name: data.email.split('@')[0] ?? data.email,
-    },
-    {
-      onRequest: () => {
-        loading.value = true
-      },
-      onSuccess: () => {
-        loading.value = false
-        router.push('/')
-      },
-      onError: (ctx) => {
-        loading.value = false
-        error.value = ctx.error.message
-      },
-    },
-  )
+  mutate({
+    email: data.email,
+    password: data.password,
+    name: data.email.split('@')[0] ?? data.email,
+  })
 }
 </script>
 
@@ -70,6 +75,10 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
         :fields="fields"
         @submit="onSubmit"
       >
+        <template #validation>
+          <UAlert v-if="error" color="error" icon="i-lucide-triangle-alert" :title="error" />
+        </template>
+
         <template #description>
           Already have an account?
           <ULink to="/auth" class="text-primary font-medium">Sign in</ULink>.

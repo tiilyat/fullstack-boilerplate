@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import type { AuthFormField, FormSubmitEvent } from '@nuxt/ui'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import * as z from 'zod'
 import { useLoginEmail } from '@/composables/use-auth'
 
 const router = useRouter()
+const route = useRoute()
+const redirectTo = route.query.redirectTo as string | undefined
 const loading = ref(false)
 const error = ref<string | null>(null)
 
 const { mutate } = useLoginEmail({
   onMutate: () => {
     loading.value = true
+    error.value = null // Clear previous errors
   },
   onError: (e) => {
     loading.value = false
@@ -21,9 +24,9 @@ const { mutate } = useLoginEmail({
       error.value = 'An unknown error occurred'
     }
   },
-  onSuccess: () => {
+  onSuccess: (data) => {
     loading.value = false
-    router.push('/')
+    router.push(redirectTo || '/')
   },
 })
 
@@ -69,8 +72,13 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
         description="Enter your credentials to access your account."
         icon="i-lucide-user"
         :fields="fields"
+        :loading="loading"
         @submit="onSubmit"
       >
+        <template #validation>
+          <UAlert v-if="error" color="error" icon="i-lucide-triangle-alert" :title="error" />
+        </template>
+
         <template #description>
           Don't have an account?
           <ULink to="/auth/sign-up" class="text-primary font-medium">Sign up</ULink>.

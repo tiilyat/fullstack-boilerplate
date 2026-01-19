@@ -6,6 +6,7 @@ const queryConfig: QueryClientConfig = {
       refetchOnWindowFocus: import.meta.env.PROD,
       retry: import.meta.env.PROD ? 3 : false,
       staleTime: 1000 * 5,
+      throwOnError: false,
     },
   },
 }

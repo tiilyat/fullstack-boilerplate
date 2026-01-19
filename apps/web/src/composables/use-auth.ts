@@ -8,6 +8,11 @@ export function useAuthUser() {
     queryKey: userKey,
     queryFn: async () => {
       const session = await authClient.getSession()
+
+      if (!session.data) {
+        throw new Error('Unauthorized')
+      }
+
       return session.data
     },
     retry: false,
@@ -26,8 +31,14 @@ export function useLoginEmail(options?: {
   ) => void
 }) {
   const loginEmailMutation = useMutation({
-    mutationFn: (credentials: Parameters<typeof authClient.signIn.email>[0]) =>
-      authClient.signIn.email(credentials),
+    mutationFn: async (credentials: Parameters<typeof authClient.signIn.email>[0]) => {
+      const response = await authClient.signIn.email(credentials)
+      // Better auth returns error object in response for failed auth
+      if (response.error) {
+        throw new Error(response.error.message || 'Authentication failed')
+      }
+      return response
+    },
     onSuccess: (data) => {
       options?.onSuccess?.(data)
     },
@@ -40,13 +51,27 @@ export function useLoginEmail(options?: {
 
 export function useRegisterEmail(options?: {
   onSuccess?: (user: ReturnType<typeof authClient.signUp.email>) => void
+  onMutate?: (variables: Parameters<typeof authClient.signUp.email>[0]) => void
+  onError?: (
+    error: Error,
+    variables: Parameters<typeof authClient.signUp.email>[0],
+    context: unknown,
+  ) => void
 }) {
   const registerEmailMutation = useMutation({
-    mutationFn: (credentials: Parameters<typeof authClient.signUp.email>[0]) =>
-      authClient.signUp.email(credentials),
+    mutationFn: async (credentials: Parameters<typeof authClient.signUp.email>[0]) => {
+      const response = await authClient.signUp.email(credentials)
+      // Better auth returns error object in response for failed auth
+      if (response.error) {
+        throw new Error(response.error.message || 'Registration failed')
+      }
+      return response
+    },
     onSuccess: (data) => {
       options?.onSuccess?.(data)
     },
+    onMutate: options?.onMutate,
+    onError: options?.onError,
   })
 
   return registerEmailMutation

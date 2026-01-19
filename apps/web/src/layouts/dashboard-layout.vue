@@ -7,9 +7,15 @@ const open = ref(false)
 
 const links: NavigationMenuItem[] = [
   {
-    label: 'Главная',
+    label: 'Home',
     to: '/',
     icon: 'i-lucide-home',
+    exact: true,
+  },
+  {
+    label: 'Tasks',
+    to: '/tasks',
+    icon: 'i-lucide-list',
   },
 ]
 </script>
