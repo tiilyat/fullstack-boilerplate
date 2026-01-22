@@ -24,7 +24,7 @@ const { mutate } = useLoginEmail({
       error.value = 'An unknown error occurred'
     }
   },
-  onSuccess: (data) => {
+  onSuccess: (_data) => {
     loading.value = false
     router.push(redirectTo || '/')
   },

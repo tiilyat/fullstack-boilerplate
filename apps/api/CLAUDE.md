@@ -57,6 +57,10 @@ pnpm lint       # Lint code
 pnpm format     # Format code
 ```
 
+## Further read
+
+- `.agent_docs/testing.md` - writing new tests, testing strategies
+
 ## References
 
 - [Hono Documentation](https://hono.dev/llms.txt)

@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Tasks API - Read (GET /tasks) > List all tasks > should return tasks with correct structure 1`] = `
+{
+  "completed": true,
+  "createdAt": Any<String>,
+  "description": "With description",
+  "id": Any<String>,
+  "title": "Structured task",
+  "updatedAt": Any<String>,
+  "userId": Any<String>,
+}
+`;
+
+exports[`Tasks API - Read Single (GET /tasks/:id) > Successful retrieval > should return task by id with full structure 1`] = `
+{
+  "completed": false,
+  "createdAt": Any<String>,
+  "description": "Full description",
+  "id": Any<String>,
+  "title": "Single task",
+  "updatedAt": Any<String>,
+  "userId": Any<String>,
+}
+`;

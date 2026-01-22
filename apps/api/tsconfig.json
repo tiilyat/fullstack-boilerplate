@@ -8,6 +8,6 @@
     "types": ["node"],
     "outDir": "./dist"
   },
-  "include": ["src", "node.d.ts", "drizzle.config.ts"],
+  "include": ["src", "node.d.ts", "drizzle.config.ts", "tests"],
   "exclude": ["dist", "node_modules"]
 }

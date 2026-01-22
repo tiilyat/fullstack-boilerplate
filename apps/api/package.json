@@ -4,8 +4,8 @@
   "exports": {
     "./client": {
       "import": {
-        "default": "./dist/src/client.js",
-        "type": "./dist/src/client.d.ts"
+        "type": "./dist/src/client.d.ts",
+        "default": "./dist/src/client.js"
       }
     }
   },
@@ -16,7 +16,11 @@
     "build": "tsc -p tsconfig.build.json",
     "start": "node --env-file=.env dist/index.js",
     "type-check": "tsc --noEmit",
-    "lint": "biome check --write"
+    "lint": "biome check --write",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "vitest run --project e2e",
+    "test:unit": "vitest run --project unit"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.8",
@@ -30,10 +34,12 @@
     "hono": "^4.11.3",
     "hono-rate-limiter": "^0.5.3",
     "pg": "^8.17.1",
+    "vitest": "^4.0.17",
     "zod": "^4.3.5"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.11",
+    "@faker-js/faker": "^10.2.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.0.5",
     "drizzle-kit": "^0.31.8",

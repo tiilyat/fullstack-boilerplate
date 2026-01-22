@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { bodyLimit } from 'hono/body-limit'
 import { cors } from 'hono/cors'
+import { HTTPException } from 'hono/http-exception'
 import { logger } from 'hono/logger'
 import { secureHeaders } from 'hono/secure-headers'
 import { db } from './db/db.js'
@@ -23,7 +24,9 @@ const tasksControllers = new TasksControllers(tasksService)
 
 const app = new Hono({ strict: false })
 
-app.use(logger())
+if (process.env.NODE_ENV !== 'test') {
+  app.use(logger())
+}
 
 app.use(
   '*',
@@ -82,7 +85,16 @@ app.get('/health', (c) => {
 })
 
 app.onError((error, c) => {
-  console.error('Unhandled error:', error)
+  // Don't log HTTPException - it's an expected error response
+  if (!(error instanceof HTTPException)) {
+    console.error('Unhandled error:', error)
+  }
+
+  // Hono handles HTTPException responses automatically
+  if (error instanceof HTTPException) {
+    return error.getResponse()
+  }
+
   return c.json(
     {
       status: 'error',

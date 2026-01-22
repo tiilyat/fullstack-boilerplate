@@ -1,3 +1,4 @@
+import { HTTPException } from 'hono/http-exception'
 import type { TasksStorage } from './tasks.storage.js'
 
 export class TasksService {
@@ -55,7 +56,7 @@ export class TasksService {
     }
 
     if (Object.keys(updates).length === 0) {
-      throw new Error('No fields to update')
+      throw new HTTPException(422, { message: 'No fields to update' })
     }
 
     return this.tasksStorage.updateTask(userId, taskId, updates)
