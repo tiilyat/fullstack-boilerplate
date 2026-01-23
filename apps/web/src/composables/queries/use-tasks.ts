@@ -6,7 +6,8 @@ export default function useTasks() {
     queryKey: ['tasks'],
     queryFn: async () => {
       const res = await apiClient.api.v1.tasks.$get()
-      return res.json()
+      const json = await res.json()
+      return json.data
     },
   })
 }
