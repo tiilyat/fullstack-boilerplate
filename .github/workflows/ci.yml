@@ -9,8 +9,8 @@ on:
 
 # Global environment variables
 env:
-  NODE_VERSION: '22.x'
-  PNPM_VERSION: '10.11.0'
+  NODE_VERSION: "22.x"
+  PNPM_VERSION: "10.11.0"
 
 jobs:
   # ============================================================================
@@ -103,7 +103,6 @@ jobs:
       CORS_ALLOW_ORIGINS: http://localhost:5173
       PORT: 8000
       CI: true
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -126,6 +125,19 @@ jobs:
         working-directory: apps/api
         run: pnpm migration:migrate
 
+      # Create .env file for vitest to read DATABASE_URL
+      - name: Create environment file
+        working-directory: apps/api
+        run: |
+          cat > .env << EOF
+          DATABASE_URL=${DATABASE_URL}
+          BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+          BETTER_AUTH_URL=${BETTER_AUTH_URL}
+          BETTER_AUTH_TRUSTED_ORIGINS=${BETTER_AUTH_TRUSTED_ORIGINS}
+          CORS_ALLOW_ORIGINS=${CORS_ALLOW_ORIGINS}
+          PORT=${PORT}
+          CI=${CI}
+          EOF
       - name: Run API tests
         run: pnpm turbo run test --filter=@fullstack-boilerplate/api --ui=stream
 
@@ -155,7 +167,12 @@ jobs:
             turbo-${{ runner.os }}-test-web-
 
       # Playwright runs headless in CI (auto-detected via process.env.CI)
+      - name: Install Playwright browsers
+        run: pnpm dlx playwright install chromium --with-deps
+
       - name: Run Web tests
+        env:
+          VITE_API_URL: http://localhost:8000
         run: pnpm turbo run test --filter=@fullstack-boilerplate/web --ui=stream
 
       # Optional: Upload test results/screenshots on failure
