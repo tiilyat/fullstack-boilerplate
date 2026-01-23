@@ -1,0 +1,168 @@
+# .github/workflows/ci.yml
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# Global environment variables
+env:
+  NODE_VERSION: '22.x'
+  PNPM_VERSION: '10.11.0'
+
+jobs:
+  # ============================================================================
+  # LINT JOB
+  # ============================================================================
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+
+      # Turborepo handles cache internally, actions/cache provides additional layer
+      - name: Cache Turbo outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            .turbo
+            apps/*/.turbo
+          key: turbo-${{ runner.os }}-lint-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-lint-
+
+      - name: Run lint
+        run: pnpm turbo run lint --ui=stream
+
+  # ============================================================================
+  # TYPE-CHECK JOB
+  # ============================================================================
+  type-check:
+    name: Type Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+
+      - name: Cache Turbo outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            .turbo
+            apps/*/.turbo
+          key: turbo-${{ runner.os }}-type-check-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-type-check-
+
+      - name: Run type check
+        run: pnpm turbo run type-check --ui=stream
+
+  # ============================================================================
+  # TEST-API JOB (with PostgreSQL)
+  # ============================================================================
+  test-api:
+    name: Test API
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # PostgreSQL service container
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: app_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    # Environment variables for API tests
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app_test
+      BETTER_AUTH_SECRET: test_secret_minimum_32_characters_long_for_ci
+      BETTER_AUTH_URL: http://localhost:8000
+      BETTER_AUTH_TRUSTED_ORIGINS: http://localhost:5173
+      CORS_ALLOW_ORIGINS: http://localhost:5173
+      PORT: 8000
+      CI: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+
+      - name: Cache Turbo outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            .turbo
+            apps/*/.turbo
+          key: turbo-${{ runner.os }}-test-api-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-test-api-
+
+      # Critical: Run migrations before tests
+      - name: Run database migrations
+        working-directory: apps/api
+        run: pnpm migration:migrate
+
+      - name: Run API tests
+        run: pnpm turbo run test --filter=@fullstack-boilerplate/api --ui=stream
+
+  # ============================================================================
+  # TEST-WEB JOB (with Playwright)
+  # ============================================================================
+  test-web:
+    name: Test Web
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+
+      - name: Cache Turbo outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            .turbo
+            apps/*/.turbo
+          key: turbo-${{ runner.os }}-test-web-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-test-web-
+
+      # Playwright runs headless in CI (auto-detected via process.env.CI)
+      - name: Run Web tests
+        run: pnpm turbo run test --filter=@fullstack-boilerplate/web --ui=stream
+
+      # Optional: Upload test results/screenshots on failure
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-test-results
+          path: apps/web/test-results/
+          retention-days: 7

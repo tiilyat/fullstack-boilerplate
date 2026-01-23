@@ -20,7 +20,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "vitest run --project e2e",
-    "test:unit": "vitest run --project unit"
+    "test:unit": "vitest run --project unit",
+    "migration:create": "drizzle-kit generate",
+    "migration:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.8",

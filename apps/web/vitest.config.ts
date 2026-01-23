@@ -10,7 +10,7 @@ export default defineConfig({
   test: {
     setupFiles: ['./src/testing/setup-test.ts'],
     browser: {
-      headless: Boolean(process.env.DEV),
+      headless: !!process.env.CI,
       enabled: true,
       provider: playwright(),
       instances: [{ browser: 'chromium' }],
