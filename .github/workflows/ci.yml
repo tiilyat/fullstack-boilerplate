@@ -9,8 +9,8 @@ on:
 
 # Global environment variables
 env:
-  NODE_VERSION: '22.x'
-  PNPM_VERSION: '10.11.0'
+  NODE_VERSION: "22.x"
+  PNPM_VERSION: "10.11.0"
 
 jobs:
   # ============================================================================
@@ -103,7 +103,6 @@ jobs:
       CORS_ALLOW_ORIGINS: http://localhost:5173
       PORT: 8000
       CI: true
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -126,6 +125,19 @@ jobs:
         working-directory: apps/api
         run: pnpm migration:migrate
 
+      # Create .env file for vitest to read DATABASE_URL
+      - name: Create environment file
+        working-directory: apps/api
+        run: |
+          cat > .env << EOF
+          DATABASE_URL=postgresql://postgres:postgres@localhost:5432/app_test
+          BETTER_AUTH_SECRET=test_secret_minimum_32_characters_long_for_ci
+          BETTER_AUTH_URL=http://localhost:8000
+          BETTER_AUTH_TRUSTED_ORIGINS=http://localhost:5173
+          CORS_ALLOW_ORIGINS=http://localhost:5173
+          PORT=8000
+          CI=true
+          EOF
       - name: Run API tests
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app_test
@@ -167,6 +179,8 @@ jobs:
         run: pnpm dlx playwright install chromium --with-deps
 
       - name: Run Web tests
+        env:
+          VITE_API_URL: http://localhost:8000
         run: pnpm turbo run test --filter=@fullstack-boilerplate/web --ui=stream
 
       # Optional: Upload test results/screenshots on failure
