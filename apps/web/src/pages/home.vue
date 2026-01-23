@@ -43,9 +43,9 @@ const handleDeleteTask = (id: string) => {
       <div class="space-y-6 p-4">
         <TodoInput @create="handleCreateTask" />
 
-        <TodoList :tasks="tasks ?? []" :is-loading="isLoading">
+        <TodoList :tasks="tasks?.data ?? []" :is-loading="isLoading">
           <TodoItem
-            v-for="task in tasks"
+            v-for="task in tasks?.data"
             :key="task.id"
             :task="task"
             @toggle="handleToggleTask(task)"

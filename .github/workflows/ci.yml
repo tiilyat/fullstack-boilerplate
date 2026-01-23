@@ -127,6 +127,14 @@ jobs:
         run: pnpm migration:migrate
 
       - name: Run API tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/app_test
+          BETTER_AUTH_SECRET: test_secret_minimum_32_characters_long_for_ci
+          BETTER_AUTH_URL: http://localhost:8000
+          BETTER_AUTH_TRUSTED_ORIGINS: http://localhost:5173
+          CORS_ALLOW_ORIGINS: http://localhost:5173
+          PORT: 8000
+          CI: true
         run: pnpm turbo run test --filter=@fullstack-boilerplate/api --ui=stream
 
   # ============================================================================
@@ -155,6 +163,9 @@ jobs:
             turbo-${{ runner.os }}-test-web-
 
       # Playwright runs headless in CI (auto-detected via process.env.CI)
+      - name: Install Playwright browsers
+        run: pnpm --filter @fullstack-boilerplate/web exec playwright install chromium --with-deps
+
       - name: Run Web tests
         run: pnpm turbo run test --filter=@fullstack-boilerplate/web --ui=stream
 
