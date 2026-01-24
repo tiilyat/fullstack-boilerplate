@@ -168,7 +168,7 @@ jobs:
 
       # Playwright runs headless in CI (auto-detected via process.env.CI)
       - name: Install Playwright browsers
-        run: pnpm dlx playwright install chromium --with-deps
+        run: pnpm --filter @fullstack-boilerplate/web exec playwright install chromium --with-deps
 
       - name: Run Web tests
         env:
