@@ -20,7 +20,9 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
             description: 'Original description',
           },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -29,10 +31,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Update the title
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: taskId },
-          json: { title: 'Updated title' },
+          param: {
+            id: taskId,
+          },
+          json: {
+            title: 'Updated title',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(200)
@@ -51,7 +59,9 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
             description: 'Original description',
           },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -60,10 +70,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Update the description only
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: taskId },
-          json: { description: 'Updated description' },
+          param: {
+            id: taskId,
+          },
+          json: {
+            description: 'Updated description',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(200)
@@ -81,7 +97,9 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
             completed: false,
           },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -90,10 +108,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Update completed status to true only
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: taskId },
-          json: { completed: true },
+          param: {
+            id: taskId,
+          },
+          json: {
+            completed: true,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(200)
@@ -111,7 +135,9 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
             completed: false,
           },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -120,14 +146,18 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Update all fields
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: taskId },
+          param: {
+            id: taskId,
+          },
           json: {
             title: 'New title',
             description: 'New description',
             completed: true,
           },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(200)
@@ -147,7 +177,9 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
             completed: false,
           },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -156,10 +188,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Update only title (partial update)
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: taskId },
-          json: { title: 'Only title updated' },
+          param: {
+            id: taskId,
+          },
+          json: {
+            title: 'Only title updated',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(200)
@@ -178,7 +216,9 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
             title: 'Task for timestamp test',
           },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -191,10 +231,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Update the task
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: taskId },
-          json: { title: 'Updated title' },
+          param: {
+            id: taskId,
+          },
+          json: {
+            title: 'Updated title',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const updateData = await updateRes.json()
@@ -209,7 +255,9 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
             title: 'Task for createdAt test',
           },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -219,10 +267,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Update the task
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: taskId },
-          json: { title: 'Updated title' },
+          param: {
+            id: taskId,
+          },
+          json: {
+            title: 'Updated title',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const updateData = await updateRes.json()
@@ -235,9 +289,13 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Create a task first
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'Valid title' },
+          json: {
+            title: 'Valid title',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -246,10 +304,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Try to update with single character title
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: taskId },
-          json: { title: 'A' },
+          param: {
+            id: taskId,
+          },
+          json: {
+            title: 'A',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(400)
@@ -259,9 +323,13 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Create a task first
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'Valid title' },
+          json: {
+            title: 'Valid title',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -271,10 +339,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       const longTitle = 'A'.repeat(101)
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: taskId },
-          json: { title: longTitle },
+          param: {
+            id: taskId,
+          },
+          json: {
+            title: longTitle,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(400)
@@ -284,9 +358,13 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Create a task first
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'Valid title' },
+          json: {
+            title: 'Valid title',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -295,10 +373,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Try to update with single character description
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: taskId },
-          json: { description: 'A' },
+          param: {
+            id: taskId,
+          },
+          json: {
+            description: 'A',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(400)
@@ -308,9 +392,13 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Create a task first
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'Valid title' },
+          json: {
+            title: 'Valid title',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -320,10 +408,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       const longDescription = 'A'.repeat(1001)
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: taskId },
-          json: { description: longDescription },
+          param: {
+            id: taskId,
+          },
+          json: {
+            description: longDescription,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(400)
@@ -333,9 +427,13 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Create a task first
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'Valid title' },
+          json: {
+            title: 'Valid title',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -345,10 +443,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Note: TypeScript should prevent this, but we test runtime validation
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: taskId },
-          json: { completed: 'true' as unknown as boolean },
+          param: {
+            id: taskId,
+          },
+          json: {
+            completed: 'true' as unknown as boolean,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(400)
@@ -358,9 +462,13 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Create a task first
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'Valid title' },
+          json: {
+            title: 'Valid title',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -368,10 +476,14 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
 
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: taskId },
+          param: {
+            id: taskId,
+          },
           json: {},
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(422)
@@ -384,10 +496,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
 
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: nonExistentId },
-          json: { title: 'Updated title' },
+          param: {
+            id: nonExistentId,
+          },
+          json: {
+            title: 'Updated title',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(404)
@@ -399,9 +517,13 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
 
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'User 2 task' },
+          json: {
+            title: 'User 2 task',
+          },
         },
-        { headers: secondAuth.authHeaders },
+        {
+          headers: secondAuth.authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -410,10 +532,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Try to update user 2's task with user 1's credentials
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: task2Id },
-          json: { title: 'Trying to update' },
+          param: {
+            id: task2Id,
+          },
+          json: {
+            title: 'Trying to update',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(404)
@@ -426,10 +554,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
 
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: invalidId },
-          json: { title: 'Updated title' },
+          param: {
+            id: invalidId,
+          },
+          json: {
+            title: 'Updated title',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(400)
@@ -441,9 +575,13 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Create a task first
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'Task for auth test' },
+          json: {
+            title: 'Task for auth test',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -451,8 +589,12 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
 
       // Try to update without auth headers
       const updateRes = await testClient.api.v1.tasks[':id'].$put({
-        param: { id: taskId },
-        json: { title: 'Updated without auth' },
+        param: {
+          id: taskId,
+        },
+        json: {
+          title: 'Updated without auth',
+        },
       })
 
       expect(updateRes.status).toBe(401)
@@ -462,9 +604,13 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Create a task first
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'Task for invalid auth test' },
+          json: {
+            title: 'Task for invalid auth test',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -478,10 +624,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
 
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: taskId },
-          json: { title: 'Updated with invalid auth' },
+          param: {
+            id: taskId,
+          },
+          json: {
+            title: 'Updated with invalid auth',
+          },
         },
-        { headers: invalidAuthHeaders },
+        {
+          headers: invalidAuthHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(401)
@@ -502,7 +654,9 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
             description: 'Original description',
           },
         },
-        { headers: userB.authHeaders },
+        {
+          headers: userB.authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -511,10 +665,16 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Try to update user B's task with user A's credentials
       const updateRes = await testClient.api.v1.tasks[':id'].$put(
         {
-          param: { id: userBTaskId },
-          json: { title: 'Trying to update user B task' },
+          param: {
+            id: userBTaskId,
+          },
+          json: {
+            title: 'Trying to update user B task',
+          },
         },
-        { headers: userA.authHeaders },
+        {
+          headers: userA.authHeaders,
+        }
       )
 
       expect(updateRes.status).toBe(404)
@@ -522,9 +682,13 @@ describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
       // Verify user B's task is unchanged
       const getRes = await testClient.api.v1.tasks[':id'].$get(
         {
-          param: { id: userBTaskId },
+          param: {
+            id: userBTaskId,
+          },
         },
-        { headers: userB.authHeaders },
+        {
+          headers: userB.authHeaders,
+        }
       )
 
       expect(getRes.status).toBe(200)

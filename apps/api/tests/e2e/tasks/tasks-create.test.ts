@@ -22,7 +22,9 @@ describe('Tasks API - Create (POST /api/v1/tasks)', () => {
             completed: false,
           },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(res.status).toBe(200)
@@ -34,8 +36,14 @@ describe('Tasks API - Create (POST /api/v1/tasks)', () => {
 
     test('should create a task with only required fields', async () => {
       const res = await testClient.api.v1.tasks.$post(
-        { json: { title: 'Minimal task' } },
-        { headers: authHeaders },
+        {
+          json: {
+            title: 'Minimal task',
+          },
+        },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(res.status).toBe(200)
@@ -47,7 +55,9 @@ describe('Tasks API - Create (POST /api/v1/tasks)', () => {
   describe('Authentication', () => {
     test('should reject request without authentication', async () => {
       const res = await testClient.api.v1.tasks.$post({
-        json: { title: 'Test' },
+        json: {
+          title: 'Test',
+        },
       })
 
       expect(res.status).toBe(401)

@@ -1,32 +1,35 @@
 <script setup lang="ts">
-import TodoInput from "@/components/TodoInput.vue";
-import TodoItem from "@/components/TodoItem.vue";
-import TodoList from "@/components/TodoList.vue";
-import useCreateTask from "@/composables/queries/use-create-task";
-import useDeleteTask from "@/composables/queries/use-delete-task";
-import useTasks from "@/composables/queries/use-tasks";
-import useUpdateTask from "@/composables/queries/use-update-task";
-import type { Task } from "@/types/task";
+import TodoInput from '@/components/TodoInput.vue'
+import TodoItem from '@/components/TodoItem.vue'
+import TodoList from '@/components/TodoList.vue'
+import useCreateTask from '@/composables/queries/use-create-task'
+import useDeleteTask from '@/composables/queries/use-delete-task'
+import useTasks from '@/composables/queries/use-tasks'
+import useUpdateTask from '@/composables/queries/use-update-task'
+import type { Task } from '@/types/task'
 
-const { data: tasks, isLoading } = useTasks();
-const createTaskMutation = useCreateTask();
-const updateTaskMutation = useUpdateTask();
-const deleteTaskMutation = useDeleteTask();
+const { data: tasks, isLoading } = useTasks()
+const createTaskMutation = useCreateTask()
+const updateTaskMutation = useUpdateTask()
+const deleteTaskMutation = useDeleteTask()
 
 const handleCreateTask = (title: string) => {
-  createTaskMutation.mutate({ title });
-};
+  createTaskMutation.mutate({ title })
+}
 
 const handleToggleTask = (task: Task) => {
   updateTaskMutation.mutate({
     id: task.id,
-    json: { title: task.title, completed: !task.completed },
-  });
-};
+    json: {
+      title: task.title,
+      completed: !task.completed,
+    },
+  })
+}
 
 const handleDeleteTask = (id: string) => {
-  deleteTaskMutation.mutate(id);
-};
+  deleteTaskMutation.mutate(id)
+}
 </script>
 
 <template>

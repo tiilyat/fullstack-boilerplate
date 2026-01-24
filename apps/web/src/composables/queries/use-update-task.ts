@@ -10,10 +10,18 @@ export default function useUpdateTask() {
   return useMutation<
     InferResponseType<typeof $put>,
     Error,
-    { id: string; json: InferRequestType<typeof $put>['json'] }
+    {
+      id: string
+      json: InferRequestType<typeof $put>['json']
+    }
   >({
     mutationFn: async ({ id, json }) => {
-      const res = await $put({ param: { id }, json })
+      const res = await $put({
+        param: {
+          id,
+        },
+        json,
+      })
       return res.json()
     },
     onSuccess: (task) => {

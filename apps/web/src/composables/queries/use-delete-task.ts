@@ -5,7 +5,11 @@ export default function useDeleteTask() {
   const queryClient = useQueryClient()
   return useMutation<void, Error, string>({
     mutationFn: async (id) => {
-      await apiClient.api.v1.tasks[':id'].$delete({ param: { id } })
+      await apiClient.api.v1.tasks[':id'].$delete({
+        param: {
+          id,
+        },
+      })
     },
     onSuccess: async (_, variables) => {
       queryClient.setQueryData(['tasks'], (oldData) => {

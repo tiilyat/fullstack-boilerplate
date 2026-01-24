@@ -22,7 +22,9 @@ const tasksStorage = new TasksStorage(db)
 const tasksService = new TasksService(tasksStorage)
 const tasksControllers = new TasksControllers(tasksService)
 
-const app = new Hono({ strict: false })
+const app = new Hono({
+  strict: false,
+})
 
 if (process.env.NODE_ENV !== 'test') {
   app.use(logger())
@@ -33,9 +35,14 @@ app.use(
   bodyLimit({
     maxSize: 50 * 1024, // 50KB лимит для API
     onError: (c) => {
-      return c.json({ error: 'Request body too large' }, 413)
+      return c.json(
+        {
+          error: 'Request body too large',
+        },
+        413
+      )
     },
-  }),
+  })
 )
 
 app.use(
@@ -50,7 +57,7 @@ app.use(
     strictTransportSecurity: 'max-age=63072000; includeSubDomains',
     xFrameOptions: 'DENY',
     xContentTypeOptions: 'nosniff',
-  }),
+  })
 )
 
 app.use(
@@ -62,7 +69,7 @@ app.use(
     exposeHeaders: ['Content-Length'],
     maxAge: 600,
     credentials: true,
-  }),
+  })
 )
 
 app.use('*', authSession)
@@ -100,7 +107,7 @@ app.onError((error, c) => {
       status: 'error',
       message: 'Internal server error',
     },
-    500,
+    500
   )
 })
 
