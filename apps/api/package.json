@@ -23,7 +23,8 @@
     "test:e2e": "vitest run --project e2e",
     "test:unit": "vitest run --project unit",
     "migration:create": "drizzle-kit generate",
-    "migration:migrate": "drizzle-kit migrate"
+    "migration:migrate": "drizzle-kit migrate",
+    "create-admin": "tsx scripts/create-admin.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.8",
@@ -38,7 +39,8 @@
     "hono-rate-limiter": "^0.5.3",
     "pg": "^8.17.1",
     "vitest": "^4.0.17",
-    "zod": "^4.3.5"
+    "zod": "^4.3.5",
+    "tsx": "^4.21.0"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.11",
@@ -48,7 +50,6 @@
     "drizzle-kit": "^0.31.8",
     "globals": "^17.0.0",
     "prettier": "3.7.4",
-    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }

@@ -1,7 +1,8 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { admin } from 'better-auth/plugins'
 import { db } from '../db/db'
-import { account, session, user, verification } from '../db/schema'
+import { account, session, user, verification } from '../db/schemas/auth'
 import env from '../lib/env'
 
 export const auth = betterAuth({
@@ -18,6 +19,7 @@ export const auth = betterAuth({
       verification,
     },
   }),
+  plugins: [admin()],
 })
 
 export interface AuthType {
