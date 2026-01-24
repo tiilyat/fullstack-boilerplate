@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm'
 import type { db as drizzle } from '../db/db'
-import { task as taskTable } from '../db/schema'
+import { task as taskTable } from '../db/schemas/tasks'
 
 export class TasksStorage {
   private db: typeof drizzle

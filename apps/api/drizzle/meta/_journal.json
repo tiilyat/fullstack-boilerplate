@@ -8,6 +8,13 @@
       "when": 1769161282248,
       "tag": "0000_nasty_maestro",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1769288027832,
+      "tag": "0001_flowery_mindworm",
+      "breakpoints": true
     }
   ]
 }

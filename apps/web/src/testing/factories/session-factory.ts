@@ -20,6 +20,7 @@ const defaultSession: Session = {
     createdAt: new Date('2026-01-18T14:48:34.453Z'),
     updatedAt: new Date('2026-01-18T14:48:34.453Z'),
     id: 'fhParIOQH2AynzZvKKLpXAiOLO0e4igP',
+    banned: false,
   },
 }
 
