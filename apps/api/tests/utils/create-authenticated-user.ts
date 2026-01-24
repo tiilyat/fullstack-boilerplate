@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
-import { auth } from '../../src/lib/auth.js'
-import { extractSessionToken } from './extract-session-token.js'
+import { auth } from '../../src/lib/auth'
+import { extractSessionToken } from './extract-session-token'
 
 export async function createAuthenticatedUser() {
   const firstName = faker.person.firstName()

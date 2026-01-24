@@ -1,9 +1,9 @@
 import { serve } from '@hono/node-server'
 import 'dotenv/config'
 import { exit } from 'node:process'
-import { db } from './db/db.js'
-import env from './lib/env.js'
-import { app } from './server.js'
+import { db } from './db/db'
+import env from './lib/env'
+import { app } from './server'
 
 const server = serve(
   {

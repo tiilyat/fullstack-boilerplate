@@ -1,5 +1,5 @@
 import type { z } from 'zod'
-import type { CreateTaskBodySchema, TasksQuerySchema, UpdateTaskBodySchema } from './tasks.schemas.js'
+import type { CreateTaskBodySchema, TasksQuerySchema, UpdateTaskBodySchema } from './tasks.schemas'
 
 export type CreateTaskPayload = z.infer<typeof CreateTaskBodySchema>
 export type UpdateTaskPayload = z.infer<typeof UpdateTaskBodySchema>

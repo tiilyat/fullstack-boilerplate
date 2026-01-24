@@ -1,5 +1,5 @@
-import type { TasksService } from './tasks.service.js'
-import type { CreateTaskPayload, TasksQuery, UpdateTaskPayload } from './tasks.types.js'
+import type { TasksService } from './tasks.service'
+import type { CreateTaskPayload, TasksQuery, UpdateTaskPayload } from './tasks.types'
 
 export class TasksControllers {
   constructor(private tasksService: TasksService) {}

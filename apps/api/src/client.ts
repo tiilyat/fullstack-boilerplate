@@ -1,5 +1,5 @@
 import { hc } from 'hono/client'
-import type { AppTypes } from './server.js'
+import type { AppTypes } from './server'
 
 const client = (...args: Parameters<typeof hc>) => hc<AppTypes>(...args)
 export default client

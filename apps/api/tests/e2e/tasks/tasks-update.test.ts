@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, test } from 'vitest'
-import { createAuthenticatedUser } from '../../utils/create-authenticated-user.js'
-import { testClient } from '../../utils/test-client.js'
+import { createAuthenticatedUser } from '../../utils/create-authenticated-user'
+import { testClient } from '../../utils/test-client'
 
 describe('Tasks API - Update (PUT /api/v1/tasks/:id)', () => {
   let authHeaders: Record<string, string>

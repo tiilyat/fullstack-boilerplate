@@ -1,9 +1,9 @@
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { requireAuth } from '../middleware/auth.middleware.js'
-import type { TasksControllers } from './tasks.controllers.js'
-import { CreateTaskBodySchema, TaskParamsSchema, TasksQuerySchema, UpdateTaskBodySchema } from './tasks.schemas.js'
+import { requireAuth } from '../middleware/auth.middleware'
+import type { TasksControllers } from './tasks.controllers'
+import { CreateTaskBodySchema, TaskParamsSchema, TasksQuerySchema, UpdateTaskBodySchema } from './tasks.schemas'
 
 export function tasksRoutes(controllers: TasksControllers) {
   return new Hono()

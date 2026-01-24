@@ -1,6 +1,6 @@
 import { beforeAll } from 'vitest'
-import { db } from '../../src/db/db.js'
-import { account, session, task, user, verification } from '../../src/db/schema.js'
+import { db } from '../../src/db/db'
+import { account, session, task, user, verification } from '../../src/db/schema'
 
 // Clear database before each test
 export async function cleanDatabase() {

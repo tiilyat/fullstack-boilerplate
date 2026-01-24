@@ -1,5 +1,5 @@
 import { HTTPException } from 'hono/http-exception'
-import type { TasksStorage } from './tasks.storage.js'
+import type { TasksStorage } from './tasks.storage'
 
 export class TasksService {
   private tasksStorage: TasksStorage
