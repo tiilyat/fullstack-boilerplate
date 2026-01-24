@@ -9,7 +9,13 @@ export const requireAuth = async (c: Context, next: Next) => {
   const user = c.get('user')
 
   if (!user) {
-    return c.json({ status: 'error', message: 'Unauthorized' }, 401)
+    return c.json(
+      {
+        status: 'error',
+        message: 'Unauthorized',
+      },
+      401
+    )
   }
 
   await next()
@@ -21,7 +27,9 @@ export const authSession = async (c: Context, next: Next) => {
     return next()
   }
 
-  const session = await auth.api.getSession({ headers: c.req.raw.headers })
+  const session = await auth.api.getSession({
+    headers: c.req.raw.headers,
+  })
   if (!session) {
     c.set('user', null)
     c.set('session', null)

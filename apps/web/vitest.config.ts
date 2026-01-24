@@ -13,7 +13,11 @@ export default defineConfig({
       headless: !!process.env.CI,
       enabled: true,
       provider: playwright(),
-      instances: [{ browser: 'chromium' }],
+      instances: [
+        {
+          browser: 'chromium',
+        },
+      ],
     },
   },
   resolve: {

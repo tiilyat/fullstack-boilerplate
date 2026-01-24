@@ -20,7 +20,9 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
             description: 'This task will be deleted',
           },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(createRes.status).toBe(200)
@@ -30,9 +32,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Delete the task
       const deleteRes = await testClient.api.v1.tasks[':id'].$delete(
         {
-          param: { id: taskId },
+          param: {
+            id: taskId,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(deleteRes.status).toBe(200)
@@ -44,9 +50,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Create a task first
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'Another task to delete' },
+          json: {
+            title: 'Another task to delete',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -55,9 +65,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Delete and verify status
       const deleteRes = await testClient.api.v1.tasks[':id'].$delete(
         {
-          param: { id: taskId },
+          param: {
+            id: taskId,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(deleteRes.status).toBe(200)
@@ -67,9 +81,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Create a task
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'Task to verify deletion' },
+          json: {
+            title: 'Task to verify deletion',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -78,17 +96,25 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Delete the task
       await testClient.api.v1.tasks[':id'].$delete(
         {
-          param: { id: taskId },
+          param: {
+            id: taskId,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       // Try to get the task - should return 404
       const getRes = await testClient.api.v1.tasks[':id'].$get(
         {
-          param: { id: taskId },
+          param: {
+            id: taskId,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(getRes.status).toBe(404)
@@ -98,16 +124,24 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Create tasks for first user
       const task1Res = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'Task 1' },
+          json: {
+            title: 'Task 1',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const task2Res = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'Task 2' },
+          json: {
+            title: 'Task 2',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const task1Data = await task1Res.json()
@@ -116,17 +150,25 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Delete task 1
       await testClient.api.v1.tasks[':id'].$delete(
         {
-          param: { id: task1Data.data.id },
+          param: {
+            id: task1Data.data.id,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       // Verify task 2 still exists
       const getTask2Res = await testClient.api.v1.tasks[':id'].$get(
         {
-          param: { id: task2Data.data.id },
+          param: {
+            id: task2Data.data.id,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(getTask2Res.status).toBe(200)
@@ -144,9 +186,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
 
       const deleteRes = await testClient.api.v1.tasks[':id'].$delete(
         {
-          param: { id: nonExistentId },
+          param: {
+            id: nonExistentId,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(deleteRes.status).toBe(404)
@@ -158,9 +204,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
 
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'User 2 task' },
+          json: {
+            title: 'User 2 task',
+          },
         },
-        { headers: secondAuth.authHeaders },
+        {
+          headers: secondAuth.authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -169,9 +219,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Try to delete user 2's task with user 1's credentials
       const deleteRes = await testClient.api.v1.tasks[':id'].$delete(
         {
-          param: { id: task2Id },
+          param: {
+            id: task2Id,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(deleteRes.status).toBe(404)
@@ -181,9 +235,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Create a task
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'Task for double delete test' },
+          json: {
+            title: 'Task for double delete test',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -192,9 +250,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Delete the task once
       const firstDeleteRes = await testClient.api.v1.tasks[':id'].$delete(
         {
-          param: { id: taskId },
+          param: {
+            id: taskId,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(firstDeleteRes.status).toBe(200)
@@ -202,9 +264,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Try to delete again
       const secondDeleteRes = await testClient.api.v1.tasks[':id'].$delete(
         {
-          param: { id: taskId },
+          param: {
+            id: taskId,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(secondDeleteRes.status).toBe(404)
@@ -217,9 +283,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
 
       const deleteRes = await testClient.api.v1.tasks[':id'].$delete(
         {
-          param: { id: invalidId },
+          param: {
+            id: invalidId,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(deleteRes.status).toBe(400)
@@ -231,9 +301,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Create a task first
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'Task for auth test' },
+          json: {
+            title: 'Task for auth test',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -241,7 +315,9 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
 
       // Try to delete without auth headers
       const deleteRes = await testClient.api.v1.tasks[':id'].$delete({
-        param: { id: taskId },
+        param: {
+          id: taskId,
+        },
       })
 
       expect(deleteRes.status).toBe(401)
@@ -251,9 +327,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Create a task first
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'Task for invalid auth test' },
+          json: {
+            title: 'Task for invalid auth test',
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -267,9 +347,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
 
       const deleteRes = await testClient.api.v1.tasks[':id'].$delete(
         {
-          param: { id: taskId },
+          param: {
+            id: taskId,
+          },
         },
-        { headers: invalidAuthHeaders },
+        {
+          headers: invalidAuthHeaders,
+        }
       )
 
       expect(deleteRes.status).toBe(401)
@@ -285,9 +369,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Create a task for user B
       const createRes = await testClient.api.v1.tasks.$post(
         {
-          json: { title: 'User B task' },
+          json: {
+            title: 'User B task',
+          },
         },
-        { headers: userB.authHeaders },
+        {
+          headers: userB.authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -296,9 +384,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Try to delete user B's task with user A's credentials
       const deleteRes = await testClient.api.v1.tasks[':id'].$delete(
         {
-          param: { id: userBTaskId },
+          param: {
+            id: userBTaskId,
+          },
         },
-        { headers: userA.authHeaders },
+        {
+          headers: userA.authHeaders,
+        }
       )
 
       expect(deleteRes.status).toBe(404)
@@ -306,9 +398,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Verify user B's task still exists
       const getRes = await testClient.api.v1.tasks[':id'].$get(
         {
-          param: { id: userBTaskId },
+          param: {
+            id: userBTaskId,
+          },
         },
-        { headers: userB.authHeaders },
+        {
+          headers: userB.authHeaders,
+        }
       )
 
       expect(getRes.status).toBe(200)
@@ -328,7 +424,9 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
             completed: true,
           },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       const createData = await createRes.json()
@@ -337,9 +435,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Delete the task
       const deleteRes = await testClient.api.v1.tasks[':id'].$delete(
         {
-          param: { id: taskId },
+          param: {
+            id: taskId,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(deleteRes.status).toBe(200)
@@ -347,9 +449,13 @@ describe('Tasks API - Delete (DELETE /api/v1/tasks/:id)', () => {
       // Verify it's fully removed
       const getRes = await testClient.api.v1.tasks[':id'].$get(
         {
-          param: { id: taskId },
+          param: {
+            id: taskId,
+          },
         },
-        { headers: authHeaders },
+        {
+          headers: authHeaders,
+        }
       )
 
       expect(getRes.status).toBe(404)

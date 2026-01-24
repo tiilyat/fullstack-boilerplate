@@ -36,14 +36,18 @@ export const authGuard: NavigationGuardWithThis<undefined> = async (to) => {
     // Redirect to login page with return URL
     return {
       name: 'sign-in',
-      query: { redirectTo: to.fullPath },
+      query: {
+        redirectTo: to.fullPath,
+      },
     }
   }
 
   if (isAuthenticated && to.path.startsWith('/auth')) {
     const redirectTo = to.query.redirectTo
     if (typeof redirectTo === 'string' && redirectTo !== to.path) {
-      return { path: redirectTo }
+      return {
+        path: redirectTo,
+      }
     }
     return {
       name: 'home',

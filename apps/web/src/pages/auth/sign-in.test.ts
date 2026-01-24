@@ -11,14 +11,20 @@ describe('Sign In Page', () => {
     worker.use(
       http.get(getSessionURL, () => {
         return HttpResponse.json(null)
-      }),
+      })
     )
 
-    await createTestApp({ initialRoute: '/auth' })
+    await createTestApp({
+      initialRoute: '/auth',
+    })
 
     await userEvent.type(page.getByLabelText('Email'), 'test@example.com')
     await userEvent.type(page.getByPlaceholder('Enter your password'), 'secure-password')
-    await userEvent.click(page.getByRole('button', { name: 'Continue' }))
+    await userEvent.click(
+      page.getByRole('button', {
+        name: 'Continue',
+      })
+    )
   })
 
   describe('validation', () => {
@@ -26,14 +32,20 @@ describe('Sign In Page', () => {
       worker.use(
         http.get(getSessionURL, () => {
           return HttpResponse.json(null)
-        }),
+        })
       )
 
-      await createTestApp({ initialRoute: '/auth' })
+      await createTestApp({
+        initialRoute: '/auth',
+      })
 
       await userEvent.type(page.getByLabelText('Email'), 'invalid-email')
       await userEvent.type(page.getByPlaceholder('Enter your password'), 'secure-password')
-      await userEvent.click(page.getByRole('button', { name: 'Continue' }))
+      await userEvent.click(
+        page.getByRole('button', {
+          name: 'Continue',
+        })
+      )
 
       expect(page.getByText('Invalid email')).toBeInTheDocument()
     })
@@ -42,13 +54,19 @@ describe('Sign In Page', () => {
       worker.use(
         http.get(getSessionURL, () => {
           return HttpResponse.json(null)
-        }),
+        })
       )
 
-      await createTestApp({ initialRoute: '/auth' })
+      await createTestApp({
+        initialRoute: '/auth',
+      })
 
       await userEvent.type(page.getByPlaceholder('Enter your password'), 'secure-password')
-      await userEvent.click(page.getByRole('button', { name: 'Continue' }))
+      await userEvent.click(
+        page.getByRole('button', {
+          name: 'Continue',
+        })
+      )
 
       expect(page.getByText('Invalid email')).toBeInTheDocument()
     })
@@ -57,13 +75,19 @@ describe('Sign In Page', () => {
       worker.use(
         http.get(getSessionURL, () => {
           return HttpResponse.json(null)
-        }),
+        })
       )
 
-      await createTestApp({ initialRoute: '/auth' })
+      await createTestApp({
+        initialRoute: '/auth',
+      })
 
       await userEvent.type(page.getByLabelText('Email'), 'test@example.com')
-      await userEvent.click(page.getByRole('button', { name: 'Continue' }))
+      await userEvent.click(
+        page.getByRole('button', {
+          name: 'Continue',
+        })
+      )
 
       expect(page.getByText('Password is required')).toBeInTheDocument()
     })
@@ -72,14 +96,20 @@ describe('Sign In Page', () => {
       worker.use(
         http.get(getSessionURL, () => {
           return HttpResponse.json(null)
-        }),
+        })
       )
 
-      await createTestApp({ initialRoute: '/auth' })
+      await createTestApp({
+        initialRoute: '/auth',
+      })
 
       await userEvent.type(page.getByLabelText('Email'), 'test@example.com')
       await userEvent.type(page.getByPlaceholder('Enter your password'), '1234567')
-      await userEvent.click(page.getByRole('button', { name: 'Continue' }))
+      await userEvent.click(
+        page.getByRole('button', {
+          name: 'Continue',
+        })
+      )
 
       expect(page.getByText('Password must be at least 8 characters long')).toBeInTheDocument()
     })
@@ -97,16 +127,24 @@ describe('Sign In Page', () => {
               code: 'INVALID_EMAIL_OR_PASSWORD',
               message: 'Invalid email or password',
             },
-            { status: 401 },
+            {
+              status: 401,
+            }
           )
-        }),
+        })
       )
 
-      await createTestApp({ initialRoute: '/auth' })
+      await createTestApp({
+        initialRoute: '/auth',
+      })
 
       await userEvent.type(page.getByLabelText('Email'), 'test@example.com')
       await userEvent.type(page.getByPlaceholder('Enter your password'), 'wrongpassword')
-      await userEvent.click(page.getByRole('button', { name: 'Continue' }))
+      await userEvent.click(
+        page.getByRole('button', {
+          name: 'Continue',
+        })
+      )
 
       // Check that error alert is displayed
       const errorAlert = page.getByText('Invalid email or password')
@@ -124,16 +162,24 @@ describe('Sign In Page', () => {
               code: 'INTERNAL_SERVER_ERROR',
               message: 'Internal server error',
             },
-            { status: 500 },
+            {
+              status: 500,
+            }
           )
-        }),
+        })
       )
 
-      await createTestApp({ initialRoute: '/auth' })
+      await createTestApp({
+        initialRoute: '/auth',
+      })
 
       await userEvent.type(page.getByLabelText('Email'), 'test@example.com')
       await userEvent.type(page.getByPlaceholder('Enter your password'), 'secure-password')
-      await userEvent.click(page.getByRole('button', { name: 'Continue' }))
+      await userEvent.click(
+        page.getByRole('button', {
+          name: 'Continue',
+        })
+      )
 
       // Check that error alert is displayed
       const errorAlert = page.getByText('Internal server error')
@@ -144,7 +190,7 @@ describe('Sign In Page', () => {
       worker.use(
         http.get(getSessionURL, () => {
           return HttpResponse.json(null)
-        }),
+        })
       )
 
       let callCount = 0
@@ -158,20 +204,28 @@ describe('Sign In Page', () => {
                 code: 'INVALID_EMAIL_OR_PASSWORD',
                 message: 'Invalid email or password',
               },
-              { status: 401 },
+              {
+                status: 401,
+              }
             )
           }
           // Second attempt succeeds
           return HttpResponse.json(createSession())
-        }),
+        })
       )
 
-      await createTestApp({ initialRoute: '/auth' })
+      await createTestApp({
+        initialRoute: '/auth',
+      })
 
       // First attempt - should fail
       await userEvent.type(page.getByLabelText('Email'), 'test@example.com')
       await userEvent.type(page.getByPlaceholder('Enter your password'), 'wrongpassword')
-      await userEvent.click(page.getByRole('button', { name: 'Continue' }))
+      await userEvent.click(
+        page.getByRole('button', {
+          name: 'Continue',
+        })
+      )
 
       // Error should be visible
       const errorAlert = page.getByText('Invalid email or password')
@@ -182,7 +236,11 @@ describe('Sign In Page', () => {
 
       // Second attempt - should succeed
       await userEvent.type(page.getByPlaceholder('Enter your password'), 'correctpassword')
-      await userEvent.click(page.getByRole('button', { name: 'Continue' }))
+      await userEvent.click(
+        page.getByRole('button', {
+          name: 'Continue',
+        })
+      )
 
       // Error should be cleared (not in document anymore)
       await expect.element(errorAlert).not.toBeInTheDocument()

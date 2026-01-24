@@ -12,7 +12,8 @@
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
-    "lint": "biome check --write",
+    "lint": "biome check",
+    "lint:fix": "biome check --write",
     "test": "vitest run",
     "test:watch": "vitest"
   },

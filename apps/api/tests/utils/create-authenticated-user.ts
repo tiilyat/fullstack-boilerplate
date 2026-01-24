@@ -5,7 +5,10 @@ import { extractSessionToken } from './extract-session-token.js'
 export async function createAuthenticatedUser() {
   const firstName = faker.person.firstName()
   const lastName = faker.person.lastName()
-  const email = faker.internet.email({ firstName, lastName })
+  const email = faker.internet.email({
+    firstName,
+    lastName,
+  })
   const password = 'password'
 
   // Sign up через auth.api
@@ -19,7 +22,10 @@ export async function createAuthenticatedUser() {
 
   // Sign in and get session through Response object
   const signInResponse = await auth.api.signInEmail({
-    body: { email, password },
+    body: {
+      email,
+      password,
+    },
     asResponse: true,
   })
 
