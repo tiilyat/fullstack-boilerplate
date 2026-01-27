@@ -9,6 +9,11 @@ export default defineConfig({
   plugins: [vue(), tailwindcss(), ui()],
   test: {
     setupFiles: ['./src/testing/setup-test.ts'],
+    expect: {
+      poll: {
+        timeout: 3000,
+      },
+    },
     browser: {
       headless: !!process.env.CI,
       enabled: true,

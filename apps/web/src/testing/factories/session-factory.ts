@@ -26,7 +26,27 @@ const defaultSession: Session = {
 
 export function createSession(overrides: Partial<Session> = {}): Session {
   return {
-    ...defaultSession,
-    ...overrides,
+    session: {
+      ...defaultSession.session,
+      ...overrides.session,
+    },
+    user: {
+      ...defaultSession.user,
+      ...overrides.user,
+    },
+  }
+}
+
+export function createAdminSession(overrides: Partial<Session> = {}): Session {
+  return {
+    session: {
+      ...defaultSession.session,
+      ...overrides.session,
+    },
+    user: {
+      ...defaultSession.user,
+      ...overrides.user,
+      role: 'admin',
+    },
   }
 }
