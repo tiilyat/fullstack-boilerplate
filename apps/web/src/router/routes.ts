@@ -40,6 +40,14 @@ export const routes: RouteRecordRaw[] = [
             name: 'tasks',
             component: () => import('@/pages/home.vue'),
           },
+          {
+            path: 'users',
+            name: 'users',
+            component: () => import('@/pages/users.vue'),
+            meta: {
+              requiredRoles: ['admin'],
+            },
+          },
         ],
       },
       // 404 catch-all route (must be last)

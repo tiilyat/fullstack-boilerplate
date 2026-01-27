@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@nuxt/ui'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import UserMenu from '@/components/UserMenu.vue'
+import { useAuthUser } from '@/composables/use-auth'
 
 const open = ref(false)
+const { data: authUser } = useAuthUser()
 
-const links: NavigationMenuItem[] = [
+const isAdmin = computed(() => authUser.value?.user.role === 'admin')
+
+const links = computed<NavigationMenuItem[]>(() => [
   {
     label: 'Home',
     to: '/',
@@ -17,7 +21,16 @@ const links: NavigationMenuItem[] = [
     to: '/tasks',
     icon: 'i-lucide-list',
   },
-]
+  ...(isAdmin.value
+    ? [
+        {
+          label: 'Users',
+          to: '/users',
+          icon: 'i-lucide-users',
+        },
+      ]
+    : []),
+])
 </script>
 
 <template>
