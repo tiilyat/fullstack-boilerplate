@@ -7,7 +7,10 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "prepare": "husky",
-    "turbo": "turbo"
+    "turbo": "turbo",
+    "type-check": "turbo run type-check",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix"
   },
   "keywords": [],
   "author": "",

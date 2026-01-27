@@ -57,7 +57,9 @@ pnpm lint       # Lint code
 pnpm format     # Format code
 ```
 
-## Further read
+## Further Reading
+
+**IMPORTANT:** Before starting any task, identify which docs below are relevant and read them first. Load the full context before making changes.
 
 - `.agent_docs/testing.md` - writing new tests, testing strategies
 

@@ -42,8 +42,8 @@ cd apps/web && pnpm dev
 ### Before Committing
 
 ```bash
-pnpm turbo run lint --ui=stream
-pnpm turbo run type-check --ui=stream
+pnpm lint:fix --ui=stream
+pnpm type-check --ui=stream
 ```
 
 ## References
