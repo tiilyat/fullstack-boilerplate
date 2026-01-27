@@ -2,6 +2,8 @@ import { HttpResponse, http } from 'msw'
 import { createUsers } from '@/testing/factories/user-factory'
 
 export const listUsersURL = `${import.meta.env.VITE_API_URL}/api/auth/admin/list-users`
+export const banUserURL = `${import.meta.env.VITE_API_URL}/api/auth/admin/ban-user`
+export const unbanUserURL = `${import.meta.env.VITE_API_URL}/api/auth/admin/unban-user`
 
 export const adminHandlers = [
   http.get(listUsersURL, ({ request }) => {
@@ -27,5 +29,14 @@ export const adminHandlers = [
       users: paginatedUsers,
       total: filteredUsers.length,
     })
+  }),
+
+  http.post(banUserURL, async () => {
+    // better-auth возвращает пустой объект при успехе
+    return HttpResponse.json({})
+  }),
+
+  http.post(unbanUserURL, async () => {
+    return HttpResponse.json({})
   }),
 ]

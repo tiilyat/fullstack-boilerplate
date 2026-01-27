@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import type { TableColumn } from '@nuxt/ui'
+import type { DropdownMenuItem, TableColumn } from '@nuxt/ui'
 import { watchDebounced } from '@vueuse/core'
 import { computed, ref } from 'vue'
+import useBanUser from '@/composables/queries/use-ban-user'
+import useUnbanUser from '@/composables/queries/use-unban-user'
 import useUsersList from '@/composables/queries/use-users-list'
+import { useConfirmDialog } from '@/composables/use-confirm-dialog'
 import type { UserWithRole } from '@/lib/auth-client'
 
 const PAGE_SIZE = 50
@@ -13,6 +16,9 @@ const searchQuery = ref('')
 const offset = computed(() => (currentPage.value - 1) * PAGE_SIZE)
 
 const { data, isLoading, error } = useUsersList(PAGE_SIZE, offset, searchQuery)
+const { mutate: banUser, isPending: isBanning } = useBanUser()
+const { mutate: unbanUser, isPending: isUnbanning } = useUnbanUser()
+const confirmDialog = useConfirmDialog()
 
 // Debounced search with page reset
 watchDebounced(
@@ -35,16 +41,80 @@ const columns: TableColumn<UserWithRole>[] = [
       (row.getValue('emailVerified') as boolean) ? '✓' : '✗',
   },
   {
+    accessorKey: 'banned',
+    header: 'Status',
+  },
+  {
     accessorKey: 'createdAt',
     header: 'Created',
     cell: ({ row }: { row: { getValue: (key: string) => unknown } }) =>
       new Date(row.getValue('createdAt') as Date).toLocaleDateString(),
+  },
+  {
+    id: 'actions',
   },
 ]
 
 const users = computed(() => data?.value?.users ?? [])
 const total = computed(() => data?.value?.total ?? 0)
 const showPagination = computed(() => data?.value && data.value.total > PAGE_SIZE)
+
+function getUserActions(user: UserWithRole): DropdownMenuItem[][] {
+  const isBanned = user.banned === true
+
+  if (isBanned) {
+    return [
+      [
+        {
+          label: 'Unban',
+          icon: 'i-lucide-user-check',
+          onSelect: () => handleUnban(user),
+        },
+      ],
+    ]
+  }
+
+  return [
+    [
+      {
+        label: 'Ban',
+        icon: 'i-lucide-user-x',
+        color: 'error',
+        onSelect: () => handleBan(user),
+      },
+    ],
+  ]
+}
+
+async function handleBan(user: UserWithRole) {
+  const confirmed = await confirmDialog({
+    title: 'Ban User',
+    message: `Are you sure you want to ban ${user.email}?`,
+    confirmLabel: 'Ban',
+    confirmColor: 'error',
+  })
+
+  if (!confirmed) return
+
+  banUser({
+    userId: user.id,
+  })
+}
+
+async function handleUnban(user: UserWithRole) {
+  const confirmed = await confirmDialog({
+    title: 'Unban User',
+    message: `Are you sure you want to unban ${user.email}?`,
+    confirmLabel: 'Unban',
+    confirmColor: 'success',
+  })
+
+  if (!confirmed) return
+
+  unbanUser({
+    userId: user.id,
+  })
+}
 </script>
 
 <template>
@@ -76,11 +146,41 @@ const showPagination = computed(() => data?.value && data.value.total > PAGE_SIZ
         />
 
         <!-- Table with built-in loading and empty states -->
-        <UTable :data="users" :columns="columns" :loading="isLoading" />
+        <UTable
+          :data="users"
+          :columns="columns"
+          :loading="isLoading || isBanning || isUnbanning"
+        >
+          <!-- Status badge slot -->
+          <template #banned-cell="{ row }">
+            <UBadge
+              :color="row.original.banned ? 'error' : 'success'"
+              variant="subtle"
+            >
+              {{ row.original.banned ? "Banned" : "Active" }}
+            </UBadge>
+          </template>
+
+          <!-- Actions dropdown slot -->
+          <template #actions-cell="{ row }">
+            <UDropdownMenu :items="getUserActions(row.original)">
+              <UButton
+                icon="i-lucide-ellipsis-vertical"
+                color="neutral"
+                variant="ghost"
+                aria-label="User actions"
+              />
+            </UDropdownMenu>
+          </template>
+        </UTable>
 
         <!-- Pagination -->
         <div v-if="showPagination" class="flex justify-center">
-          <UPagination v-model:page="currentPage" :total="total" :items-per-page="PAGE_SIZE" />
+          <UPagination
+            v-model:page="currentPage"
+            :total="total"
+            :items-per-page="PAGE_SIZE"
+          />
         </div>
       </div>
     </template>

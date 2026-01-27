@@ -4,7 +4,7 @@ import { page, userEvent } from 'vitest/browser'
 import { createTestApp } from '@/testing/create-test-app'
 import { createAdminSession } from '@/testing/factories/session-factory'
 import { createUser, createUsers } from '@/testing/factories/user-factory'
-import { listUsersURL } from '@/testing/mocks/handlers/admin'
+import { banUserURL, listUsersURL, unbanUserURL } from '@/testing/mocks/handlers/admin'
 import { getSessionURL } from '@/testing/mocks/handlers/auth'
 import { test } from '@/testing/test-extend.server'
 
@@ -370,6 +370,327 @@ describe('Users Page', () => {
       // Проверить отсутствие пагинации
       const pagination = page.getByRole('navigation')
       await expect.element(pagination).not.toBeInTheDocument()
+    })
+  })
+
+  describe('Ban/Unban функциональность', () => {
+    describe('Отображение статуса бана', () => {
+      test('показ badge "Active" для активного пользователя', async ({ worker }) => {
+        const activeUser = createUser({
+          email: 'testactive@example.com',
+          name: 'Test User',
+          banned: false,
+        })
+
+        worker.use(
+          http.get(getSessionURL, () => {
+            return HttpResponse.json(createAdminSession())
+          }),
+          http.get(listUsersURL, () => {
+            return HttpResponse.json({
+              users: [activeUser],
+              total: 1,
+            })
+          })
+        )
+
+        await createTestApp({
+          initialRoute: '/users',
+        })
+
+        await expect.element(page.getByText('testactive@example.com')).toBeInTheDocument()
+        await expect.element(page.getByText('Active', { exact: true })).toBeInTheDocument()
+      })
+
+      test('показ badge "Banned" для забаненного пользователя', async ({ worker }) => {
+        const bannedUser = createUser({
+          email: 'testbanned@example.com',
+          name: 'Test User',
+          banned: true,
+        })
+
+        worker.use(
+          http.get(getSessionURL, () => {
+            return HttpResponse.json(createAdminSession())
+          }),
+          http.get(listUsersURL, () => {
+            return HttpResponse.json({
+              users: [bannedUser],
+              total: 1,
+            })
+          })
+        )
+
+        await createTestApp({
+          initialRoute: '/users',
+        })
+
+        await expect.element(page.getByText('testbanned@example.com')).toBeInTheDocument()
+        await expect.element(page.getByText('Banned', { exact: true })).toBeInTheDocument()
+      })
+    })
+
+    describe('Dropdown меню действий', () => {
+      test('отображение действия "Ban" для активного пользователя', async ({ worker }) => {
+        const activeUser = createUser({
+          email: 'testuser@example.com',
+          banned: false,
+        })
+
+        worker.use(
+          http.get(getSessionURL, () => {
+            return HttpResponse.json(createAdminSession())
+          }),
+          http.get(listUsersURL, () => {
+            return HttpResponse.json({
+              users: [activeUser],
+              total: 1,
+            })
+          })
+        )
+
+        await createTestApp({
+          initialRoute: '/users',
+        })
+
+        const actionsButton = page.getByRole('button', { name: 'User actions' })
+        await userEvent.click(actionsButton)
+
+        await expect.element(page.getByText('Ban', { exact: true })).toBeInTheDocument()
+      })
+
+      test('отображение действия "Unban" для забаненного пользователя', async ({ worker }) => {
+        const bannedUser = createUser({
+          email: 'testuser@example.com',
+          banned: true,
+        })
+
+        worker.use(
+          http.get(getSessionURL, () => {
+            return HttpResponse.json(createAdminSession())
+          }),
+          http.get(listUsersURL, () => {
+            return HttpResponse.json({
+              users: [bannedUser],
+              total: 1,
+            })
+          })
+        )
+
+        await createTestApp({
+          initialRoute: '/users',
+        })
+
+        const actionsButton = page.getByRole('button', { name: 'User actions' })
+        await userEvent.click(actionsButton)
+
+        await expect.element(page.getByText('Unban', { exact: true })).toBeInTheDocument()
+        await expect.element(page.getByText('Ban', { exact: true })).not.toBeInTheDocument()
+      })
+    })
+
+    describe('Бан пользователя', () => {
+      test('успешный бан пользователя через confirm dialog', async ({ worker }) => {
+        const activeUser = createUser({
+          id: 'test-user-id',
+          email: 'toban@example.com',
+          banned: false,
+        })
+
+        const bannedUser = { ...activeUser, banned: true }
+        let banRequestMade = false
+
+        worker.use(
+          http.get(getSessionURL, () => {
+            return HttpResponse.json(createAdminSession())
+          }),
+          http.get(listUsersURL, () => {
+            return HttpResponse.json({
+              users: [banRequestMade ? bannedUser : activeUser],
+              total: 1,
+            })
+          }),
+          http.post(banUserURL, async ({ request }) => {
+            const body = await request.json()
+            expect(body).toEqual({ userId: 'test-user-id' })
+            banRequestMade = true
+            return HttpResponse.json({})
+          })
+        )
+
+        await createTestApp({
+          initialRoute: '/users',
+        })
+
+        await expect.element(page.getByText('toban@example.com')).toBeInTheDocument()
+        await expect.element(page.getByText('Active', { exact: true })).toBeInTheDocument()
+
+        // Открыть dropdown
+        const actionsButton = page.getByRole('button', { name: 'User actions' })
+        await userEvent.click(actionsButton)
+
+        // Кликнуть на "Ban"
+        const banButton = page.getByText('Ban', { exact: true })
+        await userEvent.click(banButton)
+
+        // Проверить confirm dialog
+        await expect.element(page.getByText('Ban User', { exact: true })).toBeInTheDocument()
+        await expect.element(page.getByText(/Are you sure you want to ban toban@example.com/)).toBeInTheDocument()
+
+        // Подтвердить бан
+        const confirmButton = page.getByRole('button', { name: 'Ban' })
+        await userEvent.click(confirmButton)
+
+        // Проверить обновление UI - статус изменился на Banned
+        await expect.element(page.getByText('Banned', { exact: true })).toBeInTheDocument()
+      })
+
+      test('отмена бана через cancel в confirm dialog', async ({ worker }) => {
+        const activeUser = createUser({
+          id: 'test-user-id',
+          email: 'toban@example.com',
+          banned: false,
+        })
+
+        let banRequestMade = false
+
+        worker.use(
+          http.get(getSessionURL, () => {
+            return HttpResponse.json(createAdminSession())
+          }),
+          http.get(listUsersURL, () => {
+            return HttpResponse.json({
+              users: [activeUser],
+              total: 1,
+            })
+          }),
+          http.post(banUserURL, () => {
+            banRequestMade = true
+            return HttpResponse.json({})
+          })
+        )
+
+        await createTestApp({
+          initialRoute: '/users',
+        })
+
+        await expect.element(page.getByText('toban@example.com')).toBeInTheDocument()
+
+        const actionsButton = page.getByRole('button', { name: 'User actions' })
+        await userEvent.click(actionsButton)
+        await userEvent.click(page.getByText('Ban', { exact: true }))
+
+        await expect.element(page.getByText('Ban User', { exact: true })).toBeInTheDocument()
+
+        // Отменить бан
+        const cancelButton = page.getByRole('button', { name: 'Cancel' })
+        await userEvent.click(cancelButton)
+
+        // Dialog закрылся
+        await expect.element(page.getByText('Ban User', { exact: true })).not.toBeInTheDocument()
+
+        // Запрос НЕ был сделан
+        expect(banRequestMade).toBe(false)
+
+        // Badge остался "Active"
+        await expect.element(page.getByText('Active', { exact: true })).toBeInTheDocument()
+      })
+    })
+
+    describe('Разбан пользователя', () => {
+      test('успешный разбан пользователя через confirm dialog', async ({ worker }) => {
+        const bannedUser = createUser({
+          id: 'test-user-id',
+          email: 'tounban@example.com',
+          banned: true,
+        })
+
+        const activeUser = { ...bannedUser, banned: false }
+        let unbanRequestMade = false
+
+        worker.use(
+          http.get(getSessionURL, () => {
+            return HttpResponse.json(createAdminSession())
+          }),
+          http.get(listUsersURL, () => {
+            return HttpResponse.json({
+              users: [unbanRequestMade ? activeUser : bannedUser],
+              total: 1,
+            })
+          }),
+          http.post(unbanUserURL, async ({ request }) => {
+            const body = await request.json()
+            expect(body).toEqual({ userId: 'test-user-id' })
+            unbanRequestMade = true
+            return HttpResponse.json({})
+          })
+        )
+
+        await createTestApp({
+          initialRoute: '/users',
+        })
+
+        await expect.element(page.getByText('tounban@example.com')).toBeInTheDocument()
+        await expect.element(page.getByText('Banned', { exact: true })).toBeInTheDocument()
+
+        const actionsButton = page.getByRole('button', { name: 'User actions' })
+        await userEvent.click(actionsButton)
+        await userEvent.click(page.getByText('Unban', { exact: true }))
+
+        await expect.element(page.getByText('Unban User', { exact: true })).toBeInTheDocument()
+        await expect.element(page.getByText(/Are you sure you want to unban tounban@example.com/)).toBeInTheDocument()
+
+        const confirmButton = page.getByRole('button', { name: 'Unban' })
+        await userEvent.click(confirmButton)
+
+        // Проверить обновление UI - статус изменился на Active
+        await expect.element(page.getByText('Active', { exact: true })).toBeInTheDocument()
+      })
+
+      test('отмена разбана через cancel в confirm dialog', async ({ worker }) => {
+        const bannedUser = createUser({
+          id: 'test-user-id',
+          email: 'tounban@example.com',
+          banned: true,
+        })
+
+        let unbanRequestMade = false
+
+        worker.use(
+          http.get(getSessionURL, () => {
+            return HttpResponse.json(createAdminSession())
+          }),
+          http.get(listUsersURL, () => {
+            return HttpResponse.json({
+              users: [bannedUser],
+              total: 1,
+            })
+          }),
+          http.post(unbanUserURL, () => {
+            unbanRequestMade = true
+            return HttpResponse.json({})
+          })
+        )
+
+        await createTestApp({
+          initialRoute: '/users',
+        })
+
+        await expect.element(page.getByText('tounban@example.com')).toBeInTheDocument()
+
+        const actionsButton = page.getByRole('button', { name: 'User actions' })
+        await userEvent.click(actionsButton)
+        await userEvent.click(page.getByText('Unban', { exact: true }))
+
+        await expect.element(page.getByText('Unban User', { exact: true })).toBeInTheDocument()
+
+        const cancelButton = page.getByRole('button', { name: 'Cancel' })
+        await userEvent.click(cancelButton)
+
+        await expect.element(page.getByText('Unban User', { exact: true })).not.toBeInTheDocument()
+        expect(unbanRequestMade).toBe(false)
+        await expect.element(page.getByText('Banned', { exact: true })).toBeInTheDocument()
+      })
     })
   })
 })
