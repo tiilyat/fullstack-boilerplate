@@ -1,4 +1,5 @@
 import { test as testBase } from 'vitest'
+import { queryClient } from '@/lib/vue-query'
 import { worker } from './mocks/browser'
 
 export const test = testBase.extend<{
@@ -18,6 +19,9 @@ export const test = testBase.extend<{
       // Remove any request handlers added in individual test cases.
       // This prevents them from affecting unrelated tests.
       worker.resetHandlers()
+
+      // Clear TanStack Query cache to prevent data leaking between tests
+      queryClient.clear()
 
       // Stop the worker after the test.
       worker.stop()

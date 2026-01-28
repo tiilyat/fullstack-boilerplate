@@ -5,9 +5,8 @@ import { routes } from './routes'
 
 const AUTH_USER_KEY = ['auth-user'] as const
 
-export const authGuard: NavigationGuardWithThis<undefined> = async (to) => {
+async function getAuthUser() {
   const queryClient = useQueryClient()
-
   let user = queryClient.getQueryData<Session | null>(AUTH_USER_KEY)
 
   if (!user) {
@@ -16,11 +15,9 @@ export const authGuard: NavigationGuardWithThis<undefined> = async (to) => {
         queryKey: AUTH_USER_KEY,
         queryFn: async () => {
           const session = await authClient.getSession()
-
           if (!session.data) {
             throw new Error('Unauthorized')
           }
-
           return session.data
         },
         staleTime: 1000 * 60 * 5,
@@ -30,27 +27,38 @@ export const authGuard: NavigationGuardWithThis<undefined> = async (to) => {
     }
   }
 
+  return user
+}
+
+function hasRequiredRole(user: Session | null, requiredRoles?: string[]) {
+  if (!requiredRoles || requiredRoles.length === 0) return true
+  return user?.user?.role ? requiredRoles.includes(user.user.role) : false
+}
+
+export const authGuard: NavigationGuardWithThis<undefined> = async (to) => {
+  const user = await getAuthUser()
   const isAuthenticated = !!user
 
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    // Redirect to login page with return URL
-    return {
-      name: 'sign-in',
-      query: {
-        redirectTo: to.fullPath,
-      },
-    }
-  }
-
+  // Redirect authenticated users away from auth pages
   if (isAuthenticated && to.path.startsWith('/auth')) {
     const redirectTo = to.query.redirectTo
     if (typeof redirectTo === 'string' && redirectTo !== to.path) {
+      return { path: redirectTo }
+    }
+    return { name: 'home' }
+  }
+
+  // Check auth and role requirements
+  if (to.meta.requiresAuth || to.meta.requiredRoles) {
+    if (!isAuthenticated) {
       return {
-        path: redirectTo,
+        name: 'sign-in',
+        query: { redirectTo: to.fullPath },
       }
     }
-    return {
-      name: 'home',
+
+    if (!hasRequiredRole(user, to.meta.requiredRoles as string[] | undefined)) {
+      return { name: 'NotFound' }
     }
   }
 

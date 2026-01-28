@@ -67,8 +67,9 @@ jobs:
           restore-keys: |
             turbo-${{ runner.os }}-type-check-
 
-      - name: Run type check
-        run: pnpm turbo run type-check --ui=stream
+      # Build all apps (includes type-check, generates auto-imports.d.ts)
+      - name: Build and type check
+        run: pnpm turbo run build --ui=stream
 
   # ============================================================================
   # TEST-API JOB (with PostgreSQL)
