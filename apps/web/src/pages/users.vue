@@ -216,7 +216,8 @@ async function handleUnban(user: UserWithRole) {
       User Details
     </template>
 
-    <div v-if="selectedUser" class="space-y-6">
+    <template #body>
+      <div v-if="selectedUser" class="space-y-6">
       <!-- Basic Info -->
       <div class="space-y-2">
         <h3 class="text-sm font-semibold text-neutral-400 dark:text-neutral-500">Basic Info</h3>
@@ -283,5 +284,6 @@ async function handleUnban(user: UserWithRole) {
         </div>
       </div>
     </div>
+    </template>
   </USlideover>
 </template>
