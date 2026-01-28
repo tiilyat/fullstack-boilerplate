@@ -67,6 +67,10 @@ jobs:
           restore-keys: |
             turbo-${{ runner.os }}-type-check-
 
+      # Generate auto-imports.d.ts for Nuxt UI composables
+      - name: Generate type declarations
+        run: pnpm --filter @fullstack-boilerplate/web exec vite build --mode type-gen
+
       - name: Run type check
         run: pnpm turbo run type-check --ui=stream
 
