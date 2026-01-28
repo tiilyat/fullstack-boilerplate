@@ -12,6 +12,8 @@ export function createUser(overrides: Partial<UserWithRole> = {}): UserWithRole 
     updatedAt: faker.date.recent(),
     image: null,
     banned: false,
+    banReason: null,
+    banExpires: null,
     ...overrides,
   }
 }

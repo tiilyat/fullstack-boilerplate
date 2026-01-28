@@ -693,4 +693,290 @@ describe('Users Page', () => {
       })
     })
   })
+
+  describe('User Details Slideover', () => {
+    test('отображение Details для активного пользователя', async ({ worker }) => {
+      const activeUser = createUser({
+        email: 'test@example.com',
+        banned: false,
+      })
+
+      worker.use(
+        http.get(getSessionURL, () => {
+          return HttpResponse.json(createAdminSession())
+        }),
+        http.get(listUsersURL, () => {
+          return HttpResponse.json({
+            users: [activeUser],
+            total: 1,
+          })
+        })
+      )
+
+      await createTestApp({
+        initialRoute: '/users',
+      })
+
+      const actionsButton = page.getByRole('button', { name: 'User actions' })
+      await userEvent.click(actionsButton)
+
+      await expect.element(page.getByText('Details', { exact: true })).toBeInTheDocument()
+    })
+
+    test('отображение Details для забаненного пользователя', async ({ worker }) => {
+      const bannedUser = createUser({
+        email: 'banned@example.com',
+        banned: true,
+      })
+
+      worker.use(
+        http.get(getSessionURL, () => {
+          return HttpResponse.json(createAdminSession())
+        }),
+        http.get(listUsersURL, () => {
+          return HttpResponse.json({
+            users: [bannedUser],
+            total: 1,
+          })
+        })
+      )
+
+      await createTestApp({
+        initialRoute: '/users',
+      })
+
+      const actionsButton = page.getByRole('button', { name: 'User actions' })
+      await userEvent.click(actionsButton)
+
+      await expect.element(page.getByText('Details', { exact: true })).toBeInTheDocument()
+    })
+
+    test('открытие slideover при клике на Details', async ({ worker }) => {
+      const testUser = createUser({
+        id: 'user-123',
+        email: 'details@example.com',
+        name: 'Test User',
+        role: 'user',
+        emailVerified: true,
+        banned: false,
+      })
+
+      worker.use(
+        http.get(getSessionURL, () => {
+          return HttpResponse.json(createAdminSession())
+        }),
+        http.get(listUsersURL, () => {
+          return HttpResponse.json({
+            users: [testUser],
+            total: 1,
+          })
+        })
+      )
+
+      await createTestApp({
+        initialRoute: '/users',
+      })
+
+      const actionsButton = page.getByRole('button', { name: 'User actions' })
+      await userEvent.click(actionsButton)
+      await userEvent.click(page.getByText('Details', { exact: true }))
+
+      await expect.element(page.getByText('User Details')).toBeInTheDocument()
+    })
+
+    test('закрытие slideover', async ({ worker }) => {
+      const testUser = createUser({
+        email: 'close@example.com',
+      })
+
+      worker.use(
+        http.get(getSessionURL, () => {
+          return HttpResponse.json(createAdminSession())
+        }),
+        http.get(listUsersURL, () => {
+          return HttpResponse.json({
+            users: [testUser],
+            total: 1,
+          })
+        })
+      )
+
+      await createTestApp({
+        initialRoute: '/users',
+      })
+
+      const actionsButton = page.getByRole('button', { name: 'User actions' })
+      await userEvent.click(actionsButton)
+      await userEvent.click(page.getByText('Details', { exact: true }))
+
+      await expect.element(page.getByText('User Details')).toBeInTheDocument()
+
+      // Close using Escape key
+      await userEvent.keyboard('{Escape}')
+
+      await expect.element(page.getByText('User Details')).not.toBeInTheDocument()
+    })
+
+    test('отображение секции Basic Info', async ({ worker }) => {
+      const testUser = createUser({
+        id: 'user-basic-123',
+        email: 'basic@example.com',
+        name: 'Basic User',
+        role: 'admin',
+      })
+
+      worker.use(
+        http.get(getSessionURL, () => {
+          return HttpResponse.json(createAdminSession())
+        }),
+        http.get(listUsersURL, () => {
+          return HttpResponse.json({
+            users: [testUser],
+            total: 1,
+          })
+        })
+      )
+
+      await createTestApp({
+        initialRoute: '/users',
+      })
+
+      const actionsButton = page.getByRole('button', { name: 'User actions' })
+      await userEvent.click(actionsButton)
+      await userEvent.click(page.getByText('Details', { exact: true }))
+
+      await expect.element(page.getByText('Basic Info')).toBeInTheDocument()
+      // Check content is present - using nth(1) to get slideover version
+      await expect.element(page.getByText('basic@example.com').nth(1)).toBeInTheDocument()
+      await expect.element(page.getByText('Basic User').nth(1)).toBeInTheDocument()
+      await expect.element(page.getByText('admin').nth(1)).toBeInTheDocument()
+    })
+
+    test('отображение секции Verification', async ({ worker }) => {
+      const verifiedUser = createUser({
+        email: 'verified@example.com',
+        emailVerified: true,
+      })
+
+      worker.use(
+        http.get(getSessionURL, () => {
+          return HttpResponse.json(createAdminSession())
+        }),
+        http.get(listUsersURL, () => {
+          return HttpResponse.json({
+            users: [verifiedUser],
+            total: 1,
+          })
+        })
+      )
+
+      await createTestApp({
+        initialRoute: '/users',
+      })
+
+      const actionsButton = page.getByRole('button', { name: 'User actions' })
+      await userEvent.click(actionsButton)
+      await userEvent.click(page.getByText('Details', { exact: true }))
+
+      // Check Verification section header is displayed
+      await expect.element(page.getByText('Verification')).toBeInTheDocument()
+      // Check verification status badge (2nd occurrence is in slideover, first is table header)
+      await expect.element(page.getByText('Verified', { exact: true }).nth(1)).toBeInTheDocument()
+    })
+
+    test('отображение секции Timestamps', async ({ worker }) => {
+      const testUser = createUser({
+        email: 'dates@example.com',
+        createdAt: new Date('2024-01-15'),
+        updatedAt: new Date('2024-02-20'),
+      })
+
+      worker.use(
+        http.get(getSessionURL, () => {
+          return HttpResponse.json(createAdminSession())
+        }),
+        http.get(listUsersURL, () => {
+          return HttpResponse.json({
+            users: [testUser],
+            total: 1,
+          })
+        })
+      )
+
+      await createTestApp({
+        initialRoute: '/users',
+      })
+
+      const actionsButton = page.getByRole('button', { name: 'User actions' })
+      await userEvent.click(actionsButton)
+      await userEvent.click(page.getByText('Details', { exact: true }))
+
+      await expect.element(page.getByText('Timestamps', { exact: true })).toBeInTheDocument()
+      await expect.element(page.getByText('Created:')).toBeInTheDocument()
+      await expect.element(page.getByText('Updated:')).toBeInTheDocument()
+    })
+
+    test('отображение секции Ban Info для забаненного пользователя', async ({ worker }) => {
+      const bannedUser = createUser({
+        email: 'banneduser@example.com',
+        banned: true,
+        banReason: 'Violation of terms',
+        banExpires: new Date('2025-12-31'),
+      })
+
+      worker.use(
+        http.get(getSessionURL, () => {
+          return HttpResponse.json(createAdminSession())
+        }),
+        http.get(listUsersURL, () => {
+          return HttpResponse.json({
+            users: [bannedUser],
+            total: 1,
+          })
+        })
+      )
+
+      await createTestApp({
+        initialRoute: '/users',
+      })
+
+      const actionsButton = page.getByRole('button', { name: 'User actions' })
+      await userEvent.click(actionsButton)
+      await userEvent.click(page.getByText('Details', { exact: true }))
+
+      await expect.element(page.getByText('Ban Info')).toBeInTheDocument()
+      await expect.element(page.getByText('Violation of terms')).toBeInTheDocument()
+    })
+
+    test('отсутствие секции Ban Info для активного пользователя', async ({ worker }) => {
+      const activeUser = createUser({
+        email: 'activeuser@example.com',
+        banned: false,
+        banReason: null,
+        banExpires: null,
+      })
+
+      worker.use(
+        http.get(getSessionURL, () => {
+          return HttpResponse.json(createAdminSession())
+        }),
+        http.get(listUsersURL, () => {
+          return HttpResponse.json({
+            users: [activeUser],
+            total: 1,
+          })
+        })
+      )
+
+      await createTestApp({
+        initialRoute: '/users',
+      })
+
+      const actionsButton = page.getByRole('button', { name: 'User actions' })
+      await userEvent.click(actionsButton)
+      await userEvent.click(page.getByText('Details', { exact: true }))
+
+      await expect.element(page.getByText('Ban Info')).not.toBeInTheDocument()
+    })
+  })
 })
