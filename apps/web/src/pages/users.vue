@@ -2,6 +2,8 @@
 import type { DropdownMenuItem, TableColumn } from '@nuxt/ui'
 import { watchDebounced } from '@vueuse/core'
 import { computed, ref } from 'vue'
+import UserDetailsView from '@/components/UserDetailsView.vue'
+import UserEditForm from '@/components/UserEditForm.vue'
 import useBanUser from '@/composables/queries/use-ban-user'
 import useUnbanUser from '@/composables/queries/use-unban-user'
 import useUsersList from '@/composables/queries/use-users-list'
@@ -17,6 +19,13 @@ const isDetailsOpen = computed({
   get: () => selectedUser.value !== null,
   set: (v) => {
     if (!v) selectedUser.value = null
+  },
+})
+const selectedUserForEdit = ref<UserWithRole | null>(null)
+const isEditOpen = computed({
+  get: () => selectedUserForEdit.value !== null,
+  set: (v) => {
+    if (!v) selectedUserForEdit.value = null
   },
 })
 
@@ -79,6 +88,13 @@ function getUserActions(user: UserWithRole): DropdownMenuItem[][] {
             selectedUser.value = user
           },
         },
+        {
+          label: 'Edit',
+          icon: 'i-lucide-pencil',
+          onSelect: () => {
+            selectedUserForEdit.value = user
+          },
+        },
       ],
       [
         {
@@ -97,6 +113,13 @@ function getUserActions(user: UserWithRole): DropdownMenuItem[][] {
         icon: 'i-lucide-info',
         onSelect: () => {
           selectedUser.value = user
+        },
+      },
+      {
+        label: 'Edit',
+        icon: 'i-lucide-pencil',
+        onSelect: () => {
+          selectedUserForEdit.value = user
         },
       },
     ],
@@ -217,73 +240,22 @@ async function handleUnban(user: UserWithRole) {
     </template>
 
     <template #body>
-      <div v-if="selectedUser" class="space-y-6">
-      <!-- Basic Info -->
-      <div class="space-y-2">
-        <h3 class="text-sm font-semibold text-neutral-400 dark:text-neutral-500">Basic Info</h3>
-        <div class="space-y-1 text-sm">
-          <div class="flex justify-between">
-            <span class="text-neutral-500 dark:text-neutral-400">ID:</span>
-            <span class="font-mono text-xs">{{ selectedUser.id }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-neutral-500 dark:text-neutral-400">Email:</span>
-            <span>{{ selectedUser.email }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-neutral-500 dark:text-neutral-400">Name:</span>
-            <span>{{ selectedUser.name || '-' }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-neutral-500 dark:text-neutral-400">Role:</span>
-            <span>{{ selectedUser.role }}</span>
-          </div>
-        </div>
-      </div>
+      <UserDetailsView :user="selectedUser" />
+    </template>
+  </USlideover>
 
-      <!-- Verification -->
-      <div class="space-y-2">
-        <h3 class="text-sm font-semibold text-neutral-400 dark:text-neutral-500">Verification</h3>
-        <div class="flex items-center gap-2">
-          <UBadge
-            :color="selectedUser.emailVerified ? 'success' : 'neutral'"
-            variant="subtle"
-          >
-            {{ selectedUser.emailVerified ? 'Verified' : 'Not Verified' }}
-          </UBadge>
-        </div>
-      </div>
+  <USlideover v-model:open="isEditOpen">
+    <template #title>
+      Edit User
+    </template>
 
-      <!-- Timestamps -->
-      <div class="space-y-2">
-        <h3 class="text-sm font-semibold text-neutral-400 dark:text-neutral-500">Timestamps</h3>
-        <div class="space-y-1 text-sm">
-          <div class="flex justify-between">
-            <span class="text-neutral-500 dark:text-neutral-400">Created:</span>
-            <span>{{ new Date(selectedUser.createdAt).toLocaleDateString() }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-neutral-500 dark:text-neutral-400">Updated:</span>
-            <span>{{ new Date(selectedUser.updatedAt).toLocaleDateString() }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Ban Info (conditional) -->
-      <div v-if="selectedUser.banned" class="space-y-2">
-        <h3 class="text-sm font-semibold text-neutral-400 dark:text-neutral-500">Ban Info</h3>
-        <div class="space-y-1 text-sm">
-          <div v-if="selectedUser.banReason" class="flex justify-between">
-            <span class="text-neutral-500 dark:text-neutral-400">Reason:</span>
-            <span>{{ selectedUser.banReason }}</span>
-          </div>
-          <div v-if="selectedUser.banExpires" class="flex justify-between">
-            <span class="text-neutral-500 dark:text-neutral-400">Expires:</span>
-            <span>{{ new Date(selectedUser.banExpires).toLocaleDateString() }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <template #body>
+      <UserEditForm
+        v-if="selectedUserForEdit"
+        :user="selectedUserForEdit"
+        @success="isEditOpen = false"
+        @close="isEditOpen = false"
+      />
     </template>
   </USlideover>
 </template>
