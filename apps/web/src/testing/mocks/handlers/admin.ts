@@ -4,6 +4,7 @@ import { createUsers } from '@/testing/factories/user-factory'
 export const listUsersURL = `${import.meta.env.VITE_API_URL}/api/auth/admin/list-users`
 export const banUserURL = `${import.meta.env.VITE_API_URL}/api/auth/admin/ban-user`
 export const unbanUserURL = `${import.meta.env.VITE_API_URL}/api/auth/admin/unban-user`
+export const updateUserURL = `${import.meta.env.VITE_API_URL}/api/auth/admin/update-user`
 
 export const adminHandlers = [
   http.get(listUsersURL, ({ request }) => {
@@ -37,6 +38,11 @@ export const adminHandlers = [
   }),
 
   http.post(unbanUserURL, async () => {
+    return HttpResponse.json({})
+  }),
+
+  http.post(updateUserURL, async () => {
+    // better-auth возвращает пустой объект при успехе
     return HttpResponse.json({})
   }),
 ]
