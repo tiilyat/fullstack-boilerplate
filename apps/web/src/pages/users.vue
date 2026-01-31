@@ -2,8 +2,8 @@
 import type { DropdownMenuItem, TableColumn } from '@nuxt/ui'
 import { watchDebounced } from '@vueuse/core'
 import { computed, ref } from 'vue'
-import UserDetailsView from '@/components/UserDetailsView.vue'
-import UserEditForm from '@/components/UserEditForm.vue'
+import UserDetailsSlideover from '@/components/UserDetailsSlideover.vue'
+import UserEditSlideover from '@/components/UserEditSlideover.vue'
 import useBanUser from '@/composables/queries/use-ban-user'
 import useUnbanUser from '@/composables/queries/use-unban-user'
 import useUsersList from '@/composables/queries/use-users-list'
@@ -15,19 +15,9 @@ const currentPage = ref(1)
 const searchEmail = ref('')
 const searchQuery = ref('')
 const selectedUser = ref<UserWithRole | null>(null)
-const isDetailsOpen = computed({
-  get: () => selectedUser.value !== null,
-  set: (v) => {
-    if (!v) selectedUser.value = null
-  },
-})
+const isDetailsOpen = ref(false)
 const selectedUserForEdit = ref<UserWithRole | null>(null)
-const isEditOpen = computed({
-  get: () => selectedUserForEdit.value !== null,
-  set: (v) => {
-    if (!v) selectedUserForEdit.value = null
-  },
-})
+const isEditOpen = ref(false)
 
 const offset = computed(() => (currentPage.value - 1) * PAGE_SIZE)
 
@@ -86,6 +76,7 @@ function getUserActions(user: UserWithRole): DropdownMenuItem[][] {
           icon: 'i-lucide-info',
           onSelect: () => {
             selectedUser.value = user
+            isDetailsOpen.value = true
           },
         },
         {
@@ -93,6 +84,7 @@ function getUserActions(user: UserWithRole): DropdownMenuItem[][] {
           icon: 'i-lucide-pencil',
           onSelect: () => {
             selectedUserForEdit.value = user
+            isEditOpen.value = true
           },
         },
       ],
@@ -113,6 +105,7 @@ function getUserActions(user: UserWithRole): DropdownMenuItem[][] {
         icon: 'i-lucide-info',
         onSelect: () => {
           selectedUser.value = user
+          isDetailsOpen.value = true
         },
       },
       {
@@ -120,6 +113,7 @@ function getUserActions(user: UserWithRole): DropdownMenuItem[][] {
         icon: 'i-lucide-pencil',
         onSelect: () => {
           selectedUserForEdit.value = user
+          isEditOpen.value = true
         },
       },
     ],
@@ -234,28 +228,15 @@ async function handleUnban(user: UserWithRole) {
     </template>
   </UDashboardPanel>
 
-  <USlideover v-model:open="isDetailsOpen">
-    <template #title>
-      User Details
-    </template>
+  <UserDetailsSlideover
+    v-model:open="isDetailsOpen"
+    :user="selectedUser"
+  />
 
-    <template #body>
-      <UserDetailsView :user="selectedUser" />
-    </template>
-  </USlideover>
-
-  <USlideover v-model:open="isEditOpen">
-    <template #title>
-      Edit User
-    </template>
-
-    <template #body>
-      <UserEditForm
-        v-if="selectedUserForEdit"
-        :user="selectedUserForEdit"
-        @success="isEditOpen = false"
-        @close="isEditOpen = false"
-      />
-    </template>
-  </USlideover>
+  <UserEditSlideover
+    v-if="selectedUserForEdit"
+    v-model:open="isEditOpen"
+    :user="selectedUserForEdit"
+    @success="isEditOpen = false"
+  />
 </template>
