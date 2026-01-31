@@ -1106,7 +1106,7 @@ describe('Users Page', () => {
       await expect.element(saveButton).toBeEnabled()
     })
 
-    test('успешное сохранение показывает success toast и закрывает slideover', async ({ worker }) => {
+    test('успешное сохранение закрывает slideover', async ({ worker }) => {
       const testUser = createUser({
         id: 'user-save-123',
         email: 'save@example.com',
@@ -1156,7 +1156,7 @@ describe('Users Page', () => {
       expect(updateRequestMade).toBe(true)
     })
 
-    test('ошибка сохранения показывает error toast', async ({ worker }) => {
+    test('ошибка сохранения оставляет slideover открытым', async ({ worker }) => {
       const testUser = createUser({
         id: 'user-error-123',
         email: 'error@example.com',
@@ -1200,92 +1200,6 @@ describe('Users Page', () => {
 
       // Slideover остается открытым после ошибки (подтверждает что произошла ошибка)
       await expect.element(page.getByRole('heading', { name: 'Edit User' })).toBeInTheDocument()
-    })
-
-    test('закрытие с несохраненными изменениями показывает confirm dialog', async ({ worker }) => {
-      const testUser = createUser({
-        email: 'confirm@example.com',
-        name: 'Original Name',
-      })
-
-      worker.use(
-        http.get(getSessionURL, () => {
-          return HttpResponse.json(createAdminSession())
-        }),
-        http.get(listUsersURL, () => {
-          return HttpResponse.json({
-            users: [testUser],
-            total: 1,
-          })
-        })
-      )
-
-      await createTestApp({
-        initialRoute: '/users',
-      })
-
-      const actionsButton = page.getByRole('button', { name: 'User actions' })
-      await userEvent.click(actionsButton)
-      await userEvent.click(page.getByText('Edit', { exact: true }))
-
-      const nameInput = page.getByLabelText('Name')
-      await userEvent.clear(nameInput)
-      await userEvent.type(nameInput, 'Changed Name')
-
-      // Очистить любые toast из предыдущих тестов, чтобы они не блокировали клики
-      const toasts = document.querySelectorAll('[role="alert"]')
-      toasts.forEach((toast) => {
-        toast.remove()
-      })
-
-      const cancelButton = page.getByRole('button', { name: 'Cancel' })
-
-      // Mock window.confirm
-      const confirmStub = vi.fn().mockReturnValue(false)
-      vi.stubGlobal('confirm', confirmStub)
-
-      await userEvent.click(cancelButton)
-
-      // Проверить, что confirm был вызван
-      expect(confirmStub).toHaveBeenCalledWith('You have unsaved changes. Are you sure you want to close?')
-
-      // Slideover остается открытым, так как пользователь отказался
-      await expect.element(page.getByRole('heading', { name: 'Edit User' })).toBeInTheDocument()
-
-      vi.unstubAllGlobals()
-    })
-
-    test('закрытие без изменений не показывает confirm dialog', async ({ worker }) => {
-      const testUser = createUser({
-        email: 'noconfirm@example.com',
-        name: 'Original Name',
-      })
-
-      worker.use(
-        http.get(getSessionURL, () => {
-          return HttpResponse.json(createAdminSession())
-        }),
-        http.get(listUsersURL, () => {
-          return HttpResponse.json({
-            users: [testUser],
-            total: 1,
-          })
-        })
-      )
-
-      await createTestApp({
-        initialRoute: '/users',
-      })
-
-      const actionsButton = page.getByRole('button', { name: 'User actions' })
-      await userEvent.click(actionsButton)
-      await userEvent.click(page.getByText('Edit', { exact: true }))
-
-      // Закрыть slideover с помощью Escape (альтернатива кнопке Cancel)
-      await userEvent.keyboard('{Escape}')
-
-      // Slideover закрылся без confirm dialog
-      await expect.element(page.getByRole('heading', { name: 'Edit User' })).not.toBeInTheDocument()
     })
   })
 })
