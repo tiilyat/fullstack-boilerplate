@@ -1232,6 +1232,12 @@ describe('Users Page', () => {
       await userEvent.clear(nameInput)
       await userEvent.type(nameInput, 'Changed Name')
 
+      // Очистить любые toast из предыдущих тестов, чтобы они не блокировали клики
+      const toasts = document.querySelectorAll('[role="alert"]')
+      toasts.forEach((toast) => {
+        toast.remove()
+      })
+
       const cancelButton = page.getByRole('button', { name: 'Cancel' })
 
       // Mock window.confirm

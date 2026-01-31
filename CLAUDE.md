@@ -60,6 +60,9 @@ Run `bd prime` for workflow context, or install hooks (`bd hooks install`) for a
 
 For full workflow details: `bd prime`
 
+- Treat beads issue descriptions as github issue descriptions. Include all context needed for another developer to pick up this task: code references, file and line number references, reasoning, link to any relevant plan files or other issues, etc..
+- When you are working and find issues that should be fixed but aren't relevant to your current task, please file them as beads so we can work on them later.
+
 ## Landing the Plane (Session Completion)
 
 **When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
