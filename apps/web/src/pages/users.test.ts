@@ -4,7 +4,7 @@ import { page, userEvent } from 'vitest/browser'
 import { createTestApp } from '@/testing/create-test-app'
 import { createAdminSession } from '@/testing/factories/session-factory'
 import { createUser, createUsers } from '@/testing/factories/user-factory'
-import { banUserURL, listUsersURL, unbanUserURL } from '@/testing/mocks/handlers/admin'
+import { banUserURL, listUsersURL, unbanUserURL, updateUserURL } from '@/testing/mocks/handlers/admin'
 import { getSessionURL } from '@/testing/mocks/handlers/auth'
 import { test } from '@/testing/test-extend.server'
 
@@ -977,6 +977,229 @@ describe('Users Page', () => {
       await userEvent.click(page.getByText('Details', { exact: true }))
 
       await expect.element(page.getByText('Ban Info')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('User Edit Feature', () => {
+    test('открытие edit slideover при клике на Edit в dropdown меню', async ({ worker }) => {
+      const testUser = createUser({
+        id: 'user-edit-123',
+        email: 'edit@example.com',
+        name: 'Edit User',
+      })
+
+      worker.use(
+        http.get(getSessionURL, () => {
+          return HttpResponse.json(createAdminSession())
+        }),
+        http.get(listUsersURL, () => {
+          return HttpResponse.json({
+            users: [testUser],
+            total: 1,
+          })
+        })
+      )
+
+      await createTestApp({
+        initialRoute: '/users',
+      })
+
+      const actionsButton = page.getByRole('button', { name: 'User actions' })
+      await userEvent.click(actionsButton)
+      await userEvent.click(page.getByText('Edit', { exact: true }))
+
+      await expect.element(page.getByRole('heading', { name: 'Edit User' })).toBeInTheDocument()
+    })
+
+    test('префилл имени пользователя в поле Name', async ({ worker }) => {
+      const testUser = createUser({
+        id: 'user-prefill-123',
+        email: 'prefill@example.com',
+        name: 'Prefilled Name',
+      })
+
+      worker.use(
+        http.get(getSessionURL, () => {
+          return HttpResponse.json(createAdminSession())
+        }),
+        http.get(listUsersURL, () => {
+          return HttpResponse.json({
+            users: [testUser],
+            total: 1,
+          })
+        })
+      )
+
+      await createTestApp({
+        initialRoute: '/users',
+      })
+
+      const actionsButton = page.getByRole('button', { name: 'User actions' })
+      await userEvent.click(actionsButton)
+      await userEvent.click(page.getByText('Edit', { exact: true }))
+
+      const nameInput = page.getByLabelText('Name')
+      await expect.element(nameInput).toHaveValue('Prefilled Name')
+    })
+
+    test('кнопка Save disabled при отсутствии изменений', async ({ worker }) => {
+      const testUser = createUser({
+        email: 'nodirty@example.com',
+        name: 'No Dirty',
+      })
+
+      worker.use(
+        http.get(getSessionURL, () => {
+          return HttpResponse.json(createAdminSession())
+        }),
+        http.get(listUsersURL, () => {
+          return HttpResponse.json({
+            users: [testUser],
+            total: 1,
+          })
+        })
+      )
+
+      await createTestApp({
+        initialRoute: '/users',
+      })
+
+      const actionsButton = page.getByRole('button', { name: 'User actions' })
+      await userEvent.click(actionsButton)
+      await userEvent.click(page.getByText('Edit', { exact: true }))
+
+      const saveButton = page.getByRole('button', { name: 'Save' })
+      await expect.element(saveButton).toBeDisabled()
+    })
+
+    test('кнопка Save enabled после изменения имени', async ({ worker }) => {
+      const testUser = createUser({
+        email: 'dirty@example.com',
+        name: 'Original Name',
+      })
+
+      worker.use(
+        http.get(getSessionURL, () => {
+          return HttpResponse.json(createAdminSession())
+        }),
+        http.get(listUsersURL, () => {
+          return HttpResponse.json({
+            users: [testUser],
+            total: 1,
+          })
+        })
+      )
+
+      await createTestApp({
+        initialRoute: '/users',
+      })
+
+      const actionsButton = page.getByRole('button', { name: 'User actions' })
+      await userEvent.click(actionsButton)
+      await userEvent.click(page.getByText('Edit', { exact: true }))
+
+      const nameInput = page.getByLabelText('Name')
+      await userEvent.clear(nameInput)
+      await userEvent.type(nameInput, 'New Name')
+
+      const saveButton = page.getByRole('button', { name: 'Save' })
+      await expect.element(saveButton).toBeEnabled()
+    })
+
+    test('успешное сохранение закрывает slideover', async ({ worker }) => {
+      const testUser = createUser({
+        id: 'user-save-123',
+        email: 'save@example.com',
+        name: 'Original Name',
+      })
+
+      let updateRequestMade = false
+
+      worker.use(
+        http.get(getSessionURL, () => {
+          return HttpResponse.json(createAdminSession())
+        }),
+        http.get(listUsersURL, () => {
+          return HttpResponse.json({
+            users: [testUser],
+            total: 1,
+          })
+        }),
+        http.post(updateUserURL, async ({ request }) => {
+          const body = (await request.json()) as { userId: string; data: { name?: string } }
+          expect(body.userId).toBe('user-save-123')
+          expect(body.data.name).toBe('New Name')
+          updateRequestMade = true
+          return HttpResponse.json({})
+        })
+      )
+
+      await createTestApp({
+        initialRoute: '/users',
+      })
+
+      const actionsButton = page.getByRole('button', { name: 'User actions' })
+      await userEvent.click(actionsButton)
+      await userEvent.click(page.getByText('Edit', { exact: true }))
+
+      const nameInput = page.getByLabelText('Name')
+      await userEvent.clear(nameInput)
+      await userEvent.type(nameInput, 'New Name')
+
+      const saveButton = page.getByRole('button', { name: 'Save' })
+      await userEvent.click(saveButton)
+
+      // Проверить, что slideover закрылся (подтверждает успешное сохранение)
+      await expect.element(page.getByRole('heading', { name: 'Edit User' })).not.toBeInTheDocument()
+
+      // Проверить, что запрос был сделан
+      expect(updateRequestMade).toBe(true)
+    })
+
+    test('ошибка сохранения оставляет slideover открытым', async ({ worker }) => {
+      const testUser = createUser({
+        id: 'user-error-123',
+        email: 'error@example.com',
+        name: 'Original Name',
+      })
+
+      worker.use(
+        http.get(getSessionURL, () => {
+          return HttpResponse.json(createAdminSession())
+        }),
+        http.get(listUsersURL, () => {
+          return HttpResponse.json({
+            users: [testUser],
+            total: 1,
+          })
+        }),
+        http.post(updateUserURL, () => {
+          return HttpResponse.json(
+            {
+              error: { message: 'Update failed' },
+            },
+            { status: 500 }
+          )
+        })
+      )
+
+      await createTestApp({
+        initialRoute: '/users',
+      })
+
+      const actionsButton = page.getByRole('button', { name: 'User actions' })
+      await userEvent.click(actionsButton)
+      await userEvent.click(page.getByText('Edit', { exact: true }))
+
+      const nameInput = page.getByLabelText('Name')
+      await userEvent.clear(nameInput)
+      await userEvent.type(nameInput, 'New Name')
+
+      const saveButton = page.getByRole('button', { name: 'Save' })
+      await userEvent.click(saveButton)
+
+      // Slideover остается открытым после ошибки (подтверждает что произошла ошибка)
+      await expect.element(page.getByRole('heading', { name: 'Edit User' })).toBeInTheDocument()
     })
   })
 })

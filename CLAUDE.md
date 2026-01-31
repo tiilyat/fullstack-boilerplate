@@ -48,17 +48,20 @@ pnpm type-check --ui=stream
 
 ## Issue Tracking
 
-This project uses bd (beads) for issue tracking.
-Run bd prime for workflow context.
+This project uses **bd (beads)** for issue tracking.
+Run `bd prime` for workflow context, or install hooks (`bd hooks install`) for auto-injection.
 
-Quick reference:
+**Quick reference:**
 
-- bd ready - Find unblocked work
-- bd create "Title" --type task --priority 2 - Create issue
-- bd close <id> - Complete work
-- bd sync - Sync with git (run at session end)
+- `bd ready` - Find unblocked work
+- `bd create "Title" --type task --priority 2` - Create issue
+- `bd close <id>` - Complete work
+- `bd sync` - Sync with git (run at session end)
 
-For full workflow details: bd prime
+For full workflow details: `bd prime`
+
+- Treat beads issue descriptions as github issue descriptions. Include all context needed for another developer to pick up this task: code references, file and line number references, reasoning, link to any relevant plan files or other issues, etc..
+- When you are working and find issues that should be fixed but aren't relevant to your current task, please file them as beads so we can work on them later.
 
 ## Landing the Plane (Session Completion)
 
