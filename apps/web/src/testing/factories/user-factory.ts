@@ -3,11 +3,11 @@ import type { UserWithRole } from '@/lib/auth-client'
 
 export function createUser(overrides: Partial<UserWithRole> = {}): UserWithRole {
   return {
-    id: faker.string.alphanumeric(32),
+    id: faker.string.uuid(),
     email: faker.internet.email(),
     name: faker.person.fullName(),
     role: 'user',
-    emailVerified: false,
+    emailVerified: faker.datatype.boolean(),
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent(),
     image: null,
