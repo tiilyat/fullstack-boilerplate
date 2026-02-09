@@ -1,161 +1,173 @@
 <script setup lang="ts">
-import type { DropdownMenuItem, TableColumn } from '@nuxt/ui'
-import { watchDebounced } from '@vueuse/core'
-import { computed, ref } from 'vue'
-import UserDetailsSlideover from '@/components/UserDetailsSlideover.vue'
-import UserEditSlideover from '@/components/UserEditSlideover.vue'
-import useBanUser from '@/composables/queries/use-ban-user'
-import useUnbanUser from '@/composables/queries/use-unban-user'
-import useUsersList from '@/composables/queries/use-users-list'
-import { useConfirmDialog } from '@/composables/use-confirm-dialog'
-import type { UserWithRole } from '@/lib/auth-client'
+import type { DropdownMenuItem, TableColumn } from "@nuxt/ui";
+import { watchDebounced } from "@vueuse/core";
+import { computed, ref } from "vue";
+import UserDetailsSlideover from "@/components/UserDetailsSlideover.vue";
+import UserEditSlideover from "@/components/UserEditSlideover.vue";
+import useBanUser from "@/composables/queries/use-ban-user";
+import useUnbanUser from "@/composables/queries/use-unban-user";
+import useUsersList from "@/composables/queries/use-users-list";
+import { useConfirmDialog } from "@/composables/use-confirm-dialog";
+import type { UserWithRole } from "@/lib/auth-client";
 
-const PAGE_SIZE = 50
-const currentPage = ref(1)
-const searchEmail = ref('')
-const searchQuery = ref('')
-const selectedUser = ref<UserWithRole | null>(null)
-const isDetailsOpen = ref(false)
-const selectedUserForEdit = ref<UserWithRole | null>(null)
-const isEditOpen = ref(false)
+const PAGE_SIZE = 50;
+const currentPage = ref(1);
+const searchEmail = ref("");
+const searchQuery = ref("");
 
-const offset = computed(() => (currentPage.value - 1) * PAGE_SIZE)
+const offset = computed(() => (currentPage.value - 1) * PAGE_SIZE);
 
-const { data, isLoading, error } = useUsersList(PAGE_SIZE, offset, searchQuery)
-const { mutate: banUser, isPending: isBanning } = useBanUser()
-const { mutate: unbanUser, isPending: isUnbanning } = useUnbanUser()
-const confirmDialog = useConfirmDialog()
+const { data, isLoading, error } = useUsersList(PAGE_SIZE, offset, searchQuery);
+const { mutate: banUser, isPending: isBanning } = useBanUser();
+const { mutate: unbanUser, isPending: isUnbanning } = useUnbanUser();
+const confirmDialog = useConfirmDialog();
+const overlay = useOverlay();
+
+const userDetailsSlideover = overlay.create(UserDetailsSlideover);
+const userEditSlideover = overlay.create(UserEditSlideover);
 
 // Debounced search with page reset
 watchDebounced(
   searchEmail,
   (newValue: string) => {
-    searchQuery.value = newValue
-    currentPage.value = 1
+    searchQuery.value = newValue;
+    currentPage.value = 1;
   },
-  { debounce: 300 }
-)
+  { debounce: 300 },
+);
 
 const columns: TableColumn<UserWithRole>[] = [
-  { accessorKey: 'email', header: 'Email' },
-  { accessorKey: 'name', header: 'Name' },
-  { accessorKey: 'role', header: 'Role' },
+  { accessorKey: "email", header: "Email" },
+  { accessorKey: "name", header: "Name" },
+  { accessorKey: "role", header: "Role" },
   {
-    accessorKey: 'emailVerified',
-    header: 'Verified',
+    accessorKey: "emailVerified",
+    header: "Verified",
     cell: ({ row }: { row: { getValue: (key: string) => unknown } }) =>
-      (row.getValue('emailVerified') as boolean) ? '✓' : '✗',
+      (row.getValue("emailVerified") as boolean) ? "✓" : "✗",
   },
   {
-    accessorKey: 'banned',
-    header: 'Status',
+    accessorKey: "banned",
+    header: "Status",
   },
   {
-    accessorKey: 'createdAt',
-    header: 'Created',
+    accessorKey: "createdAt",
+    header: "Created",
     cell: ({ row }: { row: { getValue: (key: string) => unknown } }) =>
-      new Date(row.getValue('createdAt') as Date).toLocaleDateString(),
+      new Date(row.getValue("createdAt") as Date).toLocaleDateString(),
   },
   {
-    id: 'actions',
+    id: "actions",
   },
-]
+];
 
-const users = computed(() => data?.value?.users ?? [])
-const total = computed(() => data?.value?.total ?? 0)
-const showPagination = computed(() => data?.value && data.value.total > PAGE_SIZE)
+const users = computed(() => data?.value?.users ?? []);
+const total = computed(() => data?.value?.total ?? 0);
+const showPagination = computed(
+  () => data?.value && data.value.total > PAGE_SIZE,
+);
+
+function openUserDetailsSlideover(user: UserWithRole) {
+  userDetailsSlideover.open({
+    user,
+  });
+}
+
+async function openUserEditSlideover(user: UserWithRole) {
+  const instance = userEditSlideover.open({
+    user,
+  });
+
+  const s = await instance.result;
+}
 
 function getUserActions(user: UserWithRole): DropdownMenuItem[][] {
-  const isBanned = user.banned === true
+  const isBanned = user.banned === true;
 
   if (isBanned) {
     return [
       [
         {
-          label: 'Details',
-          icon: 'i-lucide-info',
+          label: "Details",
+          icon: "i-lucide-info",
           onSelect: () => {
-            selectedUser.value = user
-            isDetailsOpen.value = true
+            openUserDetailsSlideover(user);
           },
         },
         {
-          label: 'Edit',
-          icon: 'i-lucide-pencil',
+          label: "Edit",
+          icon: "i-lucide-pencil",
           onSelect: () => {
-            selectedUserForEdit.value = user
-            isEditOpen.value = true
+            openUserEditSlideover(user);
           },
         },
       ],
       [
         {
-          label: 'Unban',
-          icon: 'i-lucide-user-check',
+          label: "Unban",
+          icon: "i-lucide-user-check",
           onSelect: () => handleUnban(user),
         },
       ],
-    ]
+    ];
   }
 
   return [
     [
       {
-        label: 'Details',
-        icon: 'i-lucide-info',
+        label: "Details",
+        icon: "i-lucide-info",
         onSelect: () => {
-          selectedUser.value = user
-          isDetailsOpen.value = true
+          openUserDetailsSlideover(user);
         },
       },
       {
-        label: 'Edit',
-        icon: 'i-lucide-pencil',
+        label: "Edit",
+        icon: "i-lucide-pencil",
         onSelect: () => {
-          selectedUserForEdit.value = user
-          isEditOpen.value = true
+          openUserEditSlideover(user);
         },
       },
     ],
     [
       {
-        label: 'Ban',
-        icon: 'i-lucide-user-x',
-        color: 'error',
+        label: "Ban",
+        icon: "i-lucide-user-x",
+        color: "error",
         onSelect: () => handleBan(user),
       },
     ],
-  ]
+  ];
 }
 
 async function handleBan(user: UserWithRole) {
   const confirmed = await confirmDialog({
-    title: 'Ban User',
+    title: "Ban User",
     message: `Are you sure you want to ban ${user.email}?`,
-    confirmLabel: 'Ban',
-    confirmColor: 'error',
-  })
+    confirmLabel: "Ban",
+    confirmColor: "error",
+  });
 
-  if (!confirmed) return
+  if (!confirmed) return;
 
   banUser({
     userId: user.id,
-  })
+  });
 }
 
 async function handleUnban(user: UserWithRole) {
   const confirmed = await confirmDialog({
-    title: 'Unban User',
+    title: "Unban User",
     message: `Are you sure you want to unban ${user.email}?`,
-    confirmLabel: 'Unban',
-    confirmColor: 'success',
-  })
+    confirmLabel: "Unban",
+    confirmColor: "success",
+  });
 
-  if (!confirmed) return
+  if (!confirmed) return;
 
   unbanUser({
     userId: user.id,
-  })
+  });
 }
 </script>
 
@@ -188,11 +200,7 @@ async function handleUnban(user: UserWithRole) {
         />
 
         <!-- Table with built-in loading and empty states -->
-        <UTable
-          :data="users"
-          :columns="columns"
-          :loading="isLoading || isBanning || isUnbanning"
-        >
+        <UTable :data="users" :columns="columns" :loading="isLoading">
           <!-- Status badge slot -->
           <template #banned-cell="{ row }">
             <UBadge
@@ -215,28 +223,17 @@ async function handleUnban(user: UserWithRole) {
             </UDropdownMenu>
           </template>
         </UTable>
+      </div>
+    </template>
 
-        <!-- Pagination -->
-        <div v-if="showPagination" class="flex justify-center">
-          <UPagination
-            v-model:page="currentPage"
-            :total="total"
-            :items-per-page="PAGE_SIZE"
-          />
-        </div>
+    <template #footer>
+      <div v-if="showPagination" class="flex justify-center">
+        <UPagination
+          v-model:page="currentPage"
+          :total="total"
+          :items-per-page="PAGE_SIZE"
+        />
       </div>
     </template>
   </UDashboardPanel>
-
-  <UserDetailsSlideover
-    v-model:open="isDetailsOpen"
-    :user="selectedUser"
-  />
-
-  <UserEditSlideover
-    v-if="selectedUserForEdit"
-    v-model:open="isEditOpen"
-    :user="selectedUserForEdit"
-    @success="isEditOpen = false"
-  />
 </template>

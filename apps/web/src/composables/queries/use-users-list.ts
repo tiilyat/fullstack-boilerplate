@@ -15,6 +15,7 @@ export default function useUsersList(
         query: {
           limit: toValue(limit),
           offset: toValue(offset),
+          sortBy: 'createdAt',
           ...(email && {
             searchValue: email,
             searchField: 'email',
