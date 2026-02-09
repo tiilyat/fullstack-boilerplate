@@ -1,5 +1,5 @@
 import { HttpResponse, http } from 'msw'
-import { createUsers } from '@/testing/factories/user-factory'
+import { createUsers } from '../../factories/user-factory'
 
 export const listUsersURL = `${import.meta.env.VITE_API_URL}/api/auth/admin/list-users`
 export const banUserURL = `${import.meta.env.VITE_API_URL}/api/auth/admin/ban-user`

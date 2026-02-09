@@ -8,7 +8,7 @@ import { defineConfig } from 'vitest/config'
 export default defineConfig({
   plugins: [vue(), tailwindcss(), ui()],
   test: {
-    setupFiles: ['./src/testing/setup-test.ts'],
+    setupFiles: ['./tests/utils/setup-test.ts'],
     testTimeout: 5000,
     browser: {
       headless: true,

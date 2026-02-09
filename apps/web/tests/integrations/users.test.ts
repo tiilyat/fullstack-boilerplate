@@ -1,12 +1,12 @@
 import { HttpResponse, http } from 'msw'
-import { describe, expect, vi } from 'vitest'
+import { describe, expect } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
-import { createTestApp } from '@/testing/create-test-app'
-import { createAdminSession } from '@/testing/factories/session-factory'
-import { createUser, createUsers } from '@/testing/factories/user-factory'
-import { banUserURL, listUsersURL, unbanUserURL, updateUserURL } from '@/testing/mocks/handlers/admin'
-import { getSessionURL } from '@/testing/mocks/handlers/auth'
-import { test } from '@/testing/test-extend.server'
+import { createTestApp } from '../utils/create-test-app'
+import { createAdminSession } from '../utils/factories/session-factory'
+import { createUser, createUsers } from '../utils/factories/user-factory'
+import { banUserURL, listUsersURL, unbanUserURL, updateUserURL } from '../utils/mocks/handlers/admin'
+import { getSessionURL } from '../utils/mocks/handlers/auth'
+import { test } from '../utils/test-extend.server'
 
 describe('Users Page', () => {
   describe('Основное отображение', () => {
