@@ -38,7 +38,7 @@ export const routes: RouteRecordRaw[] = [
           {
             path: 'tasks',
             name: 'tasks',
-            component: () => import('@/pages/home.vue'),
+            component: () => import('@/pages/tasks.vue'),
           },
           {
             path: 'users',

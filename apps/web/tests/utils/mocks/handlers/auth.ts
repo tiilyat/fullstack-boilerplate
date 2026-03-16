@@ -1,5 +1,5 @@
 import { HttpResponse, http } from 'msw'
-import { createSession } from '@/testing/factories/session-factory'
+import { createSession } from '../../factories/session-factory'
 
 export const signUpEmailURL = `${import.meta.env.VITE_API_URL}/api/auth/sign-up/email`
 export const signInEmailURL = `${import.meta.env.VITE_API_URL}/api/auth/sign-in/email`

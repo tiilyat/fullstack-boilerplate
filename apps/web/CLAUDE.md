@@ -43,3 +43,9 @@ src/
     ├── api-client.ts        # Hono RPC client with credentials
     └── vue-query.ts         # TanStack Query client config
 ```
+
+## Further Reading
+
+**IMPORTANT:** Before starting any task, identify which docs below are relevant and read them first. Load the full context before making changes.
+
+- See `.agent_docs/testing-patterns.md` for testing patterns and best practices

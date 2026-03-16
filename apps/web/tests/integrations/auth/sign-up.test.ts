@@ -1,10 +1,10 @@
 import { HttpResponse, http } from 'msw'
 import { describe, expect } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
-import { createTestApp } from '@/testing/create-test-app'
-import { createSession } from '@/testing/factories/session-factory'
-import { getSessionURL, signUpEmailURL } from '@/testing/mocks/handlers/auth'
-import { test } from '@/testing/test-extend.server'
+import { createTestApp } from '../../utils/create-test-app'
+import { createSession } from '../../utils/factories/session-factory'
+import { getSessionURL, signUpEmailURL } from '../../utils/mocks/handlers/auth'
+import { test } from '../../utils/test-extend.server'
 
 describe('Sign Up Page', () => {
   test('successful registration', async ({ worker }) => {

@@ -2,8 +2,6 @@
 import type { DropdownMenuItem, TableColumn } from '@nuxt/ui'
 import { watchDebounced } from '@vueuse/core'
 import { computed, ref } from 'vue'
-import UserDetailsSlideover from '@/components/UserDetailsSlideover.vue'
-import UserEditSlideover from '@/components/UserEditSlideover.vue'
 import useBanUser from '@/composables/queries/use-ban-user'
 import useUnbanUser from '@/composables/queries/use-unban-user'
 import useUsersList from '@/composables/queries/use-users-list'
@@ -14,16 +12,12 @@ const PAGE_SIZE = 50
 const currentPage = ref(1)
 const searchEmail = ref('')
 const searchQuery = ref('')
-const selectedUser = ref<UserWithRole | null>(null)
-const isDetailsOpen = ref(false)
-const selectedUserForEdit = ref<UserWithRole | null>(null)
-const isEditOpen = ref(false)
 
 const offset = computed(() => (currentPage.value - 1) * PAGE_SIZE)
 
 const { data, isLoading, error } = useUsersList(PAGE_SIZE, offset, searchQuery)
-const { mutate: banUser, isPending: isBanning } = useBanUser()
-const { mutate: unbanUser, isPending: isUnbanning } = useUnbanUser()
+const { mutate: banUser } = useBanUser()
+const { mutate: unbanUser } = useUnbanUser()
 const confirmDialog = useConfirmDialog()
 
 // Debounced search with page reset
@@ -72,24 +66,6 @@ function getUserActions(user: UserWithRole): DropdownMenuItem[][] {
     return [
       [
         {
-          label: 'Details',
-          icon: 'i-lucide-info',
-          onSelect: () => {
-            selectedUser.value = user
-            isDetailsOpen.value = true
-          },
-        },
-        {
-          label: 'Edit',
-          icon: 'i-lucide-pencil',
-          onSelect: () => {
-            selectedUserForEdit.value = user
-            isEditOpen.value = true
-          },
-        },
-      ],
-      [
-        {
           label: 'Unban',
           icon: 'i-lucide-user-check',
           onSelect: () => handleUnban(user),
@@ -99,24 +75,6 @@ function getUserActions(user: UserWithRole): DropdownMenuItem[][] {
   }
 
   return [
-    [
-      {
-        label: 'Details',
-        icon: 'i-lucide-info',
-        onSelect: () => {
-          selectedUser.value = user
-          isDetailsOpen.value = true
-        },
-      },
-      {
-        label: 'Edit',
-        icon: 'i-lucide-pencil',
-        onSelect: () => {
-          selectedUserForEdit.value = user
-          isEditOpen.value = true
-        },
-      },
-    ],
     [
       {
         label: 'Ban',
@@ -188,11 +146,7 @@ async function handleUnban(user: UserWithRole) {
         />
 
         <!-- Table with built-in loading and empty states -->
-        <UTable
-          :data="users"
-          :columns="columns"
-          :loading="isLoading || isBanning || isUnbanning"
-        >
+        <UTable :data="users" :columns="columns" :loading="isLoading">
           <!-- Status badge slot -->
           <template #banned-cell="{ row }">
             <UBadge
@@ -215,28 +169,17 @@ async function handleUnban(user: UserWithRole) {
             </UDropdownMenu>
           </template>
         </UTable>
+      </div>
+    </template>
 
-        <!-- Pagination -->
-        <div v-if="showPagination" class="flex justify-center">
-          <UPagination
-            v-model:page="currentPage"
-            :total="total"
-            :items-per-page="PAGE_SIZE"
-          />
-        </div>
+    <template #footer>
+      <div v-if="showPagination" class="flex justify-center">
+        <UPagination
+          v-model:page="currentPage"
+          :total="total"
+          :items-per-page="PAGE_SIZE"
+        />
       </div>
     </template>
   </UDashboardPanel>
-
-  <UserDetailsSlideover
-    v-model:open="isDetailsOpen"
-    :user="selectedUser"
-  />
-
-  <UserEditSlideover
-    v-if="selectedUserForEdit"
-    v-model:open="isEditOpen"
-    :user="selectedUserForEdit"
-    @success="isEditOpen = false"
-  />
 </template>
