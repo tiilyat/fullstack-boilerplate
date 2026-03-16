@@ -11,7 +11,6 @@ import { routes } from '@/router/routes'
 type TestApp = {
   router: Router
   container: Element
-  // Raw query methods (use page.getBy* for new code)
   getByRole: typeof page.getByRole
   getByText: typeof page.getByText
   getByTestId: typeof page.getByTestId
@@ -71,7 +70,6 @@ export async function createTestApp(options: CreateTestAppOptions = {}): Promise
   return {
     router,
     container: screen.container,
-    // Raw query methods - use page locators (return Locators, not HTMLElements)
     getByRole: page.getByRole.bind(page),
     getByText: page.getByText.bind(page),
     getByTestId: page.getByTestId.bind(page),
@@ -79,7 +77,6 @@ export async function createTestApp(options: CreateTestAppOptions = {}): Promise
     queryByText: page.getByText.bind(page),
     findByRole: page.getByRole.bind(page),
     findByText: page.getByText.bind(page),
-    // Helpers
     navigateTo,
     cleanup,
   }

@@ -8,7 +8,7 @@ export default function useUsersList(
   searchEmail: MaybeRefOrGetter<string> = ''
 ) {
   return useQuery({
-    queryKey: ['admin-users', limit, offset, searchEmail] as const,
+    queryKey: ['admin-users', toValue(limit), toValue(offset), toValue(searchEmail)] as const,
     queryFn: async () => {
       const email = toValue(searchEmail)
       const response = await authClient.admin.listUsers({
