@@ -9,8 +9,7 @@
     "prepare": "husky",
     "turbo": "turbo",
     "type-check": "turbo run type-check",
-    "lint": "turbo run lint",
-    "lint:fix": "turbo run lint:fix"
+    "lint": "turbo run lint"
   },
   "keywords": [],
   "author": "",

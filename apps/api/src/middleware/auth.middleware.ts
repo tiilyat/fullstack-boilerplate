@@ -14,7 +14,7 @@ export const requireAuth = async (c: Context, next: Next) => {
         status: 'error',
         message: 'Unauthorized',
       },
-      401
+      401,
     )
   }
 

@@ -1,5 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 import { authClient } from '@/lib/auth-client'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/vue-query'
 
 const userKey = ['auth-user'] as const
 
@@ -24,7 +24,11 @@ export function useAuthUser() {
 export function useLoginEmail(options?: {
   onSuccess?: (user: ReturnType<typeof authClient.signIn.email>) => void
   onMutate?: (variables: Parameters<typeof authClient.signIn.email>[0]) => void
-  onError?: (error: Error, variables: Parameters<typeof authClient.signIn.email>[0], context: unknown) => void
+  onError?: (
+    error: Error,
+    variables: Parameters<typeof authClient.signIn.email>[0],
+    context: unknown,
+  ) => void
 }) {
   const loginEmailMutation = useMutation({
     mutationFn: async (credentials: Parameters<typeof authClient.signIn.email>[0]) => {
@@ -48,7 +52,11 @@ export function useLoginEmail(options?: {
 export function useRegisterEmail(options?: {
   onSuccess?: (user: ReturnType<typeof authClient.signUp.email>) => void
   onMutate?: (variables: Parameters<typeof authClient.signUp.email>[0]) => void
-  onError?: (error: Error, variables: Parameters<typeof authClient.signUp.email>[0], context: unknown) => void
+  onError?: (
+    error: Error,
+    variables: Parameters<typeof authClient.signUp.email>[0],
+    context: unknown,
+  ) => void
 }) {
   const registerEmailMutation = useMutation({
     mutationFn: async (credentials: Parameters<typeof authClient.signUp.email>[0]) => {

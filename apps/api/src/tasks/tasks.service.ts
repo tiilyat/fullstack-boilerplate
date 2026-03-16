@@ -14,7 +14,7 @@ export class TasksService {
       title: string
       description?: string
       completed?: boolean
-    }
+    },
   ) {
     return this.tasksStorage.createTask({
       userId,
@@ -30,7 +30,7 @@ export class TasksService {
     } = {
       limit: 50,
       offset: 0,
-    }
+    },
   ) {
     return this.tasksStorage.getTasks(userId, options)
   }
@@ -46,7 +46,7 @@ export class TasksService {
       title?: string
       description?: string
       completed?: boolean
-    }
+    },
   ) {
     const updates: {
       title?: string

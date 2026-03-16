@@ -6,7 +6,7 @@ export const test = testBase.extend<{
   worker: typeof worker
 }>({
   worker: [
-    // biome-ignore lint/correctness/noEmptyPattern: https://vitest.dev/guide/test-context.html#extend-test-context
+    // oxlint-disable-next-line no-empty-pattern
     async ({}, use) => {
       // Start the worker before the test.
       await worker.start({

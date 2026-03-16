@@ -1,5 +1,5 @@
-import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { authClient } from '@/lib/auth-client'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 
 interface UnbanUserParams {
   userId: string

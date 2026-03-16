@@ -7,11 +7,13 @@ interface Props {
   confirmColor?: 'error' | 'primary' | 'success' | 'warning'
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  confirmLabel: 'Confirm',
-  cancelLabel: 'Cancel',
-  confirmColor: 'primary',
-})
+const {
+  title,
+  message,
+  confirmLabel = 'Confirm',
+  cancelLabel = 'Cancel',
+  confirmColor = 'primary',
+} = defineProps<Props>()
 
 const emit = defineEmits<{
   close: [value: boolean]
@@ -21,22 +23,22 @@ const emit = defineEmits<{
 <template>
   <UModal :open="true">
     <template #header>
-      {{ props.title }}
+      {{ title }}
     </template>
 
     <template #body>
       <p class="text-muted">
-        {{ props.message }}
+        {{ message }}
       </p>
     </template>
 
     <template #footer>
       <div class="flex justify-end gap-2">
         <UButton variant="ghost" @click="emit('close', false)">
-          {{ props.cancelLabel }}
+          {{ cancelLabel }}
         </UButton>
-        <UButton :color="props.confirmColor" @click="emit('close', true)">
-          {{ props.confirmLabel }}
+        <UButton :color="confirmColor" @click="emit('close', true)">
+          {{ confirmLabel }}
         </UButton>
       </div>
     </template>

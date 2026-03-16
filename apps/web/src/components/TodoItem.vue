@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Task } from '@/types/task'
 
-const props = defineProps<{
+const { task } = defineProps<{
   task: Task
 }>()
 
@@ -11,7 +11,7 @@ const emit = defineEmits<{
 }>()
 
 const handleToggle = () => {
-  emit('toggle', props.task.id)
+  emit('toggle', task.id)
 }
 </script>
 

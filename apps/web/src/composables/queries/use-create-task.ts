@@ -1,12 +1,16 @@
+import apiClient from '@/lib/api-client'
 import type { InferRequestType, InferResponseType } from '@fullstack-boilerplate/api/client'
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import apiClient from '@/lib/api-client'
 
 const $post = apiClient.api.v1.tasks.$post
 
 export default function useCreateTask() {
   const queryClient = useQueryClient()
-  return useMutation<InferResponseType<typeof $post>, Error, InferRequestType<typeof $post>['json']>({
+  return useMutation<
+    InferResponseType<typeof $post>,
+    Error,
+    InferRequestType<typeof $post>['json']
+  >({
     mutationFn: async (task) => {
       const res = await $post({
         json: task,

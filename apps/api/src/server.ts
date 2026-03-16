@@ -15,6 +15,7 @@ import { TasksService } from './tasks/tasks.service'
 import { TasksStorage } from './tasks/tasks.storage'
 
 declare module 'hono' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface ContextVariableMap extends AuthType {}
 }
 
@@ -39,10 +40,10 @@ app.use(
         {
           error: 'Request body too large',
         },
-        413
+        413,
       )
     },
-  })
+  }),
 )
 
 app.use(
@@ -57,7 +58,7 @@ app.use(
     strictTransportSecurity: 'max-age=63072000; includeSubDomains',
     xFrameOptions: 'DENY',
     xContentTypeOptions: 'nosniff',
-  })
+  }),
 )
 
 app.use(
@@ -69,12 +70,11 @@ app.use(
     exposeHeaders: ['Content-Length'],
     maxAge: 600,
     credentials: true,
-  })
+  }),
 )
 
 app.use('*', authSession)
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const router = app
   .basePath('/api')
   .on(['POST', 'GET', 'OPTIONS'], '/auth/*', (c) => {
@@ -107,7 +107,7 @@ app.onError((error, c) => {
       status: 'error',
       message: 'Internal server error',
     },
-    500
+    500,
   )
 })
 

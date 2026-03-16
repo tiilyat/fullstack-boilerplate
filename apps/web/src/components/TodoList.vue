@@ -5,11 +5,6 @@ defineProps<{
   tasks: Task[]
   isLoading: boolean
 }>()
-
-defineEmits<{
-  toggle: [id: string]
-  delete: [id: string]
-}>()
 </script>
 
 <template>
