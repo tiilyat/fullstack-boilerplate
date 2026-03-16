@@ -1,6 +1,6 @@
+import { authClient, type Session } from '@/lib/auth-client'
 import { useQueryClient } from '@tanstack/vue-query'
 import { createRouter, createWebHistory, type NavigationGuardWithThis } from 'vue-router'
-import { authClient, type Session } from '@/lib/auth-client'
 import { routes } from './routes'
 
 const AUTH_USER_KEY = ['auth-user'] as const

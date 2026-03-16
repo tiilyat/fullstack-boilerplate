@@ -1,11 +1,11 @@
+import { authClient } from '@/lib/auth-client'
 import { useQuery } from '@tanstack/vue-query'
 import { type MaybeRefOrGetter, toValue } from 'vue'
-import { authClient } from '@/lib/auth-client'
 
 export default function useUsersList(
   limit: MaybeRefOrGetter<number>,
   offset: MaybeRefOrGetter<number>,
-  searchEmail: MaybeRefOrGetter<string> = ''
+  searchEmail: MaybeRefOrGetter<string> = '',
 ) {
   return useQuery({
     queryKey: ['admin-users', toValue(limit), toValue(offset), toValue(searchEmail)] as const,

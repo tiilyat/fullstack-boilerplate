@@ -3,13 +3,17 @@ import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { requireAuth } from '../middleware/auth.middleware'
 import type { TasksControllers } from './tasks.controllers'
-import { CreateTaskBodySchema, TaskParamsSchema, TasksQuerySchema, UpdateTaskBodySchema } from './tasks.schemas'
+import {
+  CreateTaskBodySchema,
+  TaskParamsSchema,
+  TasksQuerySchema,
+  UpdateTaskBodySchema,
+} from './tasks.schemas'
 
 export function tasksRoutes(controllers: TasksControllers) {
   return new Hono()
     .use(requireAuth)
     .post('/', zValidator('json', CreateTaskBodySchema), async (c) => {
-      // biome-ignore lint/style/noNonNullAssertion: it's private route, user authenticated
       const user = c.get('user')!
       const payload = c.req.valid('json')
       const task = await controllers.createTask(user.id, payload)
@@ -18,11 +22,10 @@ export function tasksRoutes(controllers: TasksControllers) {
           data: task,
           status: 'ok',
         },
-        200
+        200,
       )
     })
     .get('/', zValidator('query', TasksQuerySchema), async (c) => {
-      // biome-ignore lint/style/noNonNullAssertion: it's private route, user authenticated
       const user = c.get('user')!
       const query = c.req.valid('query')
       const tasks = await controllers.getTasks(user.id, query)
@@ -31,11 +34,10 @@ export function tasksRoutes(controllers: TasksControllers) {
           data: tasks,
           status: 'ok',
         },
-        200
+        200,
       )
     })
     .get('/:id', zValidator('param', TaskParamsSchema), async (c) => {
-      // biome-ignore lint/style/noNonNullAssertion: it's private route, user authenticated
       const user = c.get('user')!
       const { id } = c.req.valid('param')
       const task = await controllers.getTask(user.id, id)
@@ -51,32 +53,35 @@ export function tasksRoutes(controllers: TasksControllers) {
           data: task,
           status: 'ok',
         },
-        200
+        200,
       )
     })
-    .put('/:id', zValidator('param', TaskParamsSchema), zValidator('json', UpdateTaskBodySchema), async (c) => {
-      // biome-ignore lint/style/noNonNullAssertion: it's private route, user authenticated
-      const user = c.get('user')!
-      const { id } = c.req.valid('param')
-      const payload = c.req.valid('json')
-      const updated = await controllers.updateTask(user.id, id, payload)
+    .put(
+      '/:id',
+      zValidator('param', TaskParamsSchema),
+      zValidator('json', UpdateTaskBodySchema),
+      async (c) => {
+        const user = c.get('user')!
+        const { id } = c.req.valid('param')
+        const payload = c.req.valid('json')
+        const updated = await controllers.updateTask(user.id, id, payload)
 
-      if (!updated) {
-        throw new HTTPException(404, {
-          message: 'Task not found',
-        })
-      }
+        if (!updated) {
+          throw new HTTPException(404, {
+            message: 'Task not found',
+          })
+        }
 
-      return c.json(
-        {
-          status: 'ok',
-          data: updated,
-        },
-        200
-      )
-    })
+        return c.json(
+          {
+            status: 'ok',
+            data: updated,
+          },
+          200,
+        )
+      },
+    )
     .delete('/:id', zValidator('param', TaskParamsSchema), async (c) => {
-      // biome-ignore lint/style/noNonNullAssertion: it's private route, user authenticated
       const user = c.get('user')!
       const { id } = c.req.valid('param')
       const deleted = await controllers.deleteTask(user.id, id)
@@ -91,7 +96,7 @@ export function tasksRoutes(controllers: TasksControllers) {
         {
           status: 'ok',
         },
-        200
+        200,
       )
     })
 }

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { DropdownMenuItem } from '@nuxt/ui'
-import { computed } from 'vue'
 import { useAuthUser } from '@/composables/use-auth'
 import { authClient } from '@/lib/auth-client'
+import type { DropdownMenuItem } from '@nuxt/ui'
+import { computed } from 'vue'
 
 const { data: authUser } = useAuthUser()
 

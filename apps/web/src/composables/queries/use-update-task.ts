@@ -1,7 +1,7 @@
-import type { InferRequestType, InferResponseType } from '@fullstack-boilerplate/api/client'
-import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import apiClient from '@/lib/api-client'
 import type { Task } from '@/types/task'
+import type { InferRequestType, InferResponseType } from '@fullstack-boilerplate/api/client'
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
 
 const $put = apiClient.api.v1.tasks[':id'].$put
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { useLoginEmail } from '@/composables/use-auth'
 import type { AuthFormField, FormSubmitEvent } from '@nuxt/ui'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as z from 'zod'
-import { useLoginEmail } from '@/composables/use-auth'
 
 const router = useRouter()
 const route = useRoute()
@@ -18,13 +18,9 @@ const { mutate } = useLoginEmail({
   },
   onError: (e) => {
     loading.value = false
-    if (e instanceof Error) {
-      error.value = e.message
-    } else {
-      error.value = 'An unknown error occurred'
-    }
+    error.value = e instanceof Error ? e.message : 'An unknown error occurred'
   },
-  onSuccess: (_data) => {
+  onSuccess: () => {
     loading.value = false
     router.push(redirectTo || '/')
   },

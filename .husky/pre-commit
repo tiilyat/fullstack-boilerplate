@@ -1,2 +1,2 @@
-pnpm turbo run lint:fix --ui=stream
-pnpm turbo run type-check --ui=stream
+pnpm lint
+pnpm type-check

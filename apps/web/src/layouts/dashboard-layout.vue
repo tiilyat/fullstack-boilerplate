@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from '@nuxt/ui'
-import { computed, ref } from 'vue'
 import UserMenu from '@/components/UserMenu.vue'
 import { useAuthUser } from '@/composables/use-auth'
+import type { NavigationMenuItem } from '@nuxt/ui'
+import { computed, ref } from 'vue'
 
 const open = ref(false)
 const { data: authUser } = useAuthUser()

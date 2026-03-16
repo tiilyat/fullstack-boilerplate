@@ -9,7 +9,12 @@ export class TasksStorage {
     this.db = db
   }
 
-  async createTask(task: { title: string; userId: string; description?: string; completed?: boolean }) {
+  async createTask(task: {
+    title: string
+    userId: string
+    description?: string
+    completed?: boolean
+  }) {
     const result = await this.db
       .insert(taskTable)
       .values({
@@ -28,7 +33,7 @@ export class TasksStorage {
     options?: {
       limit?: number
       offset?: number
-    }
+    },
   ) {
     const prepared = this.db.select().from(taskTable).where(eq(taskTable.userId, userId))
 
@@ -65,7 +70,7 @@ export class TasksStorage {
       title: string
       description: string
       completed: boolean
-    }>
+    }>,
   ) {
     const result = await this.db
       .update(taskTable)

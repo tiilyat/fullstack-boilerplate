@@ -12,7 +12,7 @@ const server = serve(
   },
   (info) => {
     console.log(`Server is running on http://localhost:${info.port}`)
-  }
+  },
 )
 
 let isShuttingDown = false
@@ -36,9 +36,9 @@ async function gracefulShutdown(signal: string) {
       server.close((err) => {
         if (err) {
           reject(err)
-        } else {
-          resolve()
+          return
         }
+        resolve()
       })
     })
     console.log('HTTP server closed')

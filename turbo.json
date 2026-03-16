@@ -12,10 +12,7 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"]
     },
     "lint": {
-      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/biome.json"]
-    },
-    "lint:fix": {
-      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/biome.json"]
+      "inputs": ["$TURBO_DEFAULT$"]
     },
     "type-check": {
       "dependsOn": ["^build"]

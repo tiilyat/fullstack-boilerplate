@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { DropdownMenuItem, TableColumn } from '@nuxt/ui'
-import { watchDebounced } from '@vueuse/core'
-import { computed, ref } from 'vue'
 import useBanUser from '@/composables/queries/use-ban-user'
 import useUnbanUser from '@/composables/queries/use-unban-user'
 import useUsersList from '@/composables/queries/use-users-list'
 import { useConfirmDialog } from '@/composables/use-confirm-dialog'
 import type { UserWithRole } from '@/lib/auth-client'
+import type { DropdownMenuItem, TableColumn } from '@nuxt/ui'
+import { watchDebounced } from '@vueuse/core'
+import { computed, ref } from 'vue'
 
 const PAGE_SIZE = 50
 const currentPage = ref(1)
@@ -27,7 +27,7 @@ watchDebounced(
     searchQuery.value = newValue
     currentPage.value = 1
   },
-  { debounce: 300 }
+  { debounce: 300 },
 )
 
 const columns: TableColumn<UserWithRole>[] = [
@@ -139,21 +139,14 @@ async function handleUnban(user: UserWithRole) {
         />
 
         <!-- Search -->
-        <UInput
-          v-model="searchEmail"
-          icon="i-lucide-search"
-          placeholder="Search by email..."
-        />
+        <UInput v-model="searchEmail" icon="i-lucide-search" placeholder="Search by email..." />
 
         <!-- Table with built-in loading and empty states -->
         <UTable :data="users" :columns="columns" :loading="isLoading">
           <!-- Status badge slot -->
           <template #banned-cell="{ row }">
-            <UBadge
-              :color="row.original.banned ? 'error' : 'success'"
-              variant="subtle"
-            >
-              {{ row.original.banned ? "Banned" : "Active" }}
+            <UBadge :color="row.original.banned ? 'error' : 'success'" variant="subtle">
+              {{ row.original.banned ? 'Banned' : 'Active' }}
             </UBadge>
           </template>
 
@@ -174,11 +167,7 @@ async function handleUnban(user: UserWithRole) {
 
     <template #footer>
       <div v-if="showPagination" class="flex justify-center">
-        <UPagination
-          v-model:page="currentPage"
-          :total="total"
-          :items-per-page="PAGE_SIZE"
-        />
+        <UPagination v-model:page="currentPage" :total="total" :items-per-page="PAGE_SIZE" />
       </div>
     </template>
   </UDashboardPanel>

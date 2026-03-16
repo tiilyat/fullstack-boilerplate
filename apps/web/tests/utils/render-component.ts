@@ -11,7 +11,7 @@ export const renderComponent: typeof render = (component, options) => {
   })
 
   return render(component, {
-    ...(options ?? {}),
+    ...options,
     global: {
       plugins: [
         router,
