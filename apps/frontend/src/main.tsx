@@ -1,5 +1,8 @@
-import ReactDOM from 'react-dom/client'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
+import ReactDOM from 'react-dom/client'
+import { ThemeProvider } from './components/theme-provider'
+import { queryClient } from './lib/query-client'
 import { routeTree } from './routeTree.gen'
 
 const router = createRouter({
@@ -18,5 +21,11 @@ const rootElement = document.getElementById('app')!
 
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
-  root.render(<RouterProvider router={router} />)
+  root.render(
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </QueryClientProvider>,
+  )
 }
