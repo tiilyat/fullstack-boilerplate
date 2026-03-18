@@ -71,7 +71,7 @@ export function useLogout(options?: { onSuccess?: () => void }) {
   return useMutation({
     mutationFn: () => authClient.signOut(),
     onSuccess: () => {
-      queryClient.setQueryData(AUTH_USER_KEY, null)
+      queryClient.removeQueries({ queryKey: AUTH_USER_KEY })
       options?.onSuccess?.()
     },
   })

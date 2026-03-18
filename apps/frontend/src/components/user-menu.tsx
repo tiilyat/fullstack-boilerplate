@@ -7,6 +7,7 @@ import { Button } from '#/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -18,7 +19,7 @@ export function UserMenu() {
   const navigate = useNavigate()
   const logout = useLogout({
     onSuccess: () => {
-      navigate({ to: '/sign-in' })
+      navigate({ to: '/sign-in', search: { redirectTo: '' } })
     },
   })
 
@@ -36,8 +37,10 @@ export function UserMenu() {
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" side="top" sideOffset={8}>
-          <DropdownMenuLabel>{userName}</DropdownMenuLabel>
-          <DropdownMenuLabel>{userEmail}</DropdownMenuLabel>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>{userName}</DropdownMenuLabel>
+            <DropdownMenuLabel>{userEmail}</DropdownMenuLabel>
+          </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => logout.mutate()}>
             <LogOut className="mr-2 size-3.5" />
