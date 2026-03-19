@@ -27,10 +27,4 @@ lerna-debug.log*
 # misc
 .DS_Store
 
-.turbo
-
-# bv (beads viewer) local config and caches
-.bv/
-
-# beads - local issue tracking
-.beads/
+.turbo/
