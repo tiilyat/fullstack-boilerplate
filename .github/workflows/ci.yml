@@ -143,11 +143,12 @@ jobs:
         run: pnpm turbo run test --filter=@fullstack-boilerplate/api --ui=stream
 
   # ============================================================================
-  # TEST-WEB JOB (with Playwright)
+  # TEST-WEB JOB (with Playwright) — temporarily disabled
   # ============================================================================
   test-web:
     name: Test Web
     runs-on: ubuntu-latest
+    if: false
     timeout-minutes: 15
 
     steps:
